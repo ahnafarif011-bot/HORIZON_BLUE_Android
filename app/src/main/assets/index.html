@@ -1,34 +1,169 @@
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="bn">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#061329"><meta name="description" content="HORIZON BLUE personal security toolkit">
-<link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png">
-<title>HORIZON BLUE</title><link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#061329">
+<meta name="description" content="HORIZON BLUE Personal Security Toolkit">
+<title>HORIZON BLUE</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header class="top"><div class="brand"><span class="mark">HB</span><div><b>HORIZON BLUE</b><small>Explore • Secure • Control</small></div></div><button id="install" class="install hidden">Install</button></header>
+
+<header class="top">
+  <div class="brand">
+    <span class="mark">HB</span>
+    <div>
+      <b>HORIZON BLUE</b>
+      <small>Explore • Secure • Control</small>
+    </div>
+  </div>
+</header>
+
 <div class="layout">
 <nav class="nav" id="nav">
-<button class="navbtn active" data-page="home">⌂ <span>হোম</span></button>
-<button class="navbtn" data-page="password">🔐 <span>Password Lab</span></button>
-<button class="navbtn" data-page="network">⌁ <span>Network Lab</span></button>
-<button class="navbtn" data-page="security">🛡 <span>Security Lab</span></button>
-<button class="navbtn" data-page="location">📍 <span>Location</span></button>
-<button class="navbtn" data-page="device">▣ <span>Device Monitor</span></button>
-<button class="navbtn" data-page="terminal">›_ <span>Terminal</span></button>
+  <button class="navbtn active" data-page="home">⌂ Home</button>
+  <button class="navbtn" data-page="password">🔐 Password</button>
+  <button class="navbtn" data-page="network">🌐 Network</button>
+  <button class="navbtn" data-page="security">🛡 Security</button>
+  <button class="navbtn" data-page="location">📍 Location</button>
+  <button class="navbtn" data-page="device">▣ Device</button>
+  <button class="navbtn" data-page="terminal">› Terminal</button>
 </nav>
+
 <main>
-<section class="page show" id="home"><div class="hero"><div class="orb">HB</div><p class="eyebrow">PERSONAL CYBER TOOLKIT</p><h1>HORIZON <em>BLUE</em></h1><p>Explore • Secure • Control</p><div class="hero-actions"><button data-go="password">Password Lab</button><button class="secondary" data-go="security">Security Check</button></div></div>
-<div class="tiles"><button data-go="password"><strong>🔑</strong><b>Password Lab</b><small>শক্তিশালী পাসওয়ার্ড তৈরি</small></button><button data-go="network"><strong>🌐</strong><b>Network Lab</b><small>সংযোগের তথ্য</small></button><button data-go="security"><strong>🛡</strong><b>Security Lab</b><small>নিজের অ্যাকাউন্ট সুরক্ষা</small></button><button data-go="location"><strong>📍</strong><b>Location</b><small>নিজের অবস্থান শেয়ার</small></button></div>
-<p class="note">এটি ব্যক্তিগত ও অনুমতিভিত্তিক নিরাপত্তা টুলকিট। অন্যের অ্যাকাউন্টে প্রবেশ বা গোপনে লোকেশন ট্র্যাক করার সুবিধা নেই।</p></section>
-<section class="page" id="password"><h2>Password Lab</h2><div class="panel"><label>পাসওয়ার্ডের দৈর্ঘ্য <b id="lenval">20</b></label><input id="length" type="range" min="8" max="64" value="20"><div class="checks"><label><input type="checkbox" id="upper" checked> A-Z</label><label><input type="checkbox" id="lower" checked> a-z</label><label><input type="checkbox" id="nums" checked> 0-9</label><label><input type="checkbox" id="symbols" checked> Symbols</label></div><button id="generate">Generate Password</button><div class="result"><code id="passwordOut">এখানে পাসওয়ার্ড আসবে</code><button id="copyPass" class="secondary">Copy</button></div><p id="passMsg" class="muted">পাসওয়ার্ড এই ডিভাইসেই তৈরি হয়। কোথাও পাঠানো হয় না।</p></div>
-<div class="panel"><h3>Clue-based Passphrase</h3><p class="muted">নিজের মনে রাখার মতো ২–৩টি নিরীহ শব্দ দাও; ব্যক্তিগত তথ্য ব্যবহার কোরো না।</p><input id="clue" placeholder="যেমন: নীল, পাহাড়, তারা"><button id="makePhrase">Create Passphrase</button><div class="result"><code id="phraseOut">—</code><button id="copyPhrase" class="secondary">Copy</button></div></div></section>
-<section class="page" id="network"><h2>Network Lab</h2><div class="panel"><p>ব্রাউজার যতটুকু নেটওয়ার্ক তথ্য অনুমতি দেয়:</p><div class="stat"><span>Online status</span><b id="online">—</b></div><div class="stat"><span>Connection type</span><b id="connection">Browser-supported only</b></div><div class="stat"><span>Language</span><b id="lang">—</b></div><div class="stat"><span>Platform</span><b id="platform">—</b></div><button id="refreshNet" class="secondary">Refresh</button></div><p class="note">এটি অন্য ডিভাইস স্ক্যান করে না। নিজের Wi‑Fi/নেটওয়ার্কে উন্নত পরীক্ষা করতে অনুমোদিত Linux নেটওয়ার্ক টুল ব্যবহার করতে হবে।</p></section>
-<section class="page" id="security"><h2>Security Lab</h2><div class="panel"><h3>নিজের অ্যাকাউন্ট সুরক্ষা চেকলিস্ট</h3><label class="checkrow"><input type="checkbox"> প্রতিটি অ্যাকাউন্টে আলাদা পাসওয়ার্ড</label><label class="checkrow"><input type="checkbox"> Two-factor authentication চালু</label><label class="checkrow"><input type="checkbox"> Recovery email ও phone হালনাগাদ</label><label class="checkrow"><input type="checkbox"> অচেনা লগইন সেশন পরীক্ষা</label><label class="checkrow"><input type="checkbox"> সন্দেহজনক অ্যাপের access বাতিল</label><p class="muted">চেকগুলো শুধু এই পেজে দেখানো হয়; কোনো অ্যাকাউন্টে স্বয়ংক্রিয় লগইন করা হয় না।</p></div></section>
-<section class="page" id="location"><h2>Location Intelligence</h2><div class="panel"><p>শুধু নিজের ডিভাইসের অবস্থান—তোমার অনুমতি নিয়ে।</p><button id="locate">আমার অবস্থান দেখাও</button><p id="locout" class="result">অবস্থান এখনো নেওয়া হয়নি।</p><p class="muted">ব্রাউজার permission চাইবে। HTTPS বা localhost প্রয়োজন হতে পারে। অন্য কাউকে গোপনে ট্র্যাক করা যাবে না।</p></div></section>
-<section class="page" id="device"><h2>Device Monitor</h2><div class="panel"><div class="stat"><span>Screen</span><b id="screen">—</b></div><div class="stat"><span>Browser</span><b id="browser">—</b></div><div class="stat"><span>CPU cores (reported)</span><b id="cores">—</b></div><div class="stat"><span>Memory (if supported)</span><b id="memory">Not exposed</b></div><div class="stat"><span>Battery (if supported)</span><b id="battery">Not exposed</b></div><button id="refreshDevice" class="secondary">Refresh</button></div><p class="note">মোবাইল ব্রাউজারের গোপনীয়তা সীমার কারণে সব হার্ডওয়্যার তথ্য পাওয়া যায় না।</p></section>
-<section class="page" id="terminal"><h2>NEXUS Terminal</h2><div class="terminal"><div id="termout">HORIZON BLUE safe console v1.0<br>Type <b>help</b> to see available commands.</div><div class="termline"><span>horizon@blue:~$</span><input id="command" autocomplete="off" placeholder="help"><button id="run">Run</button></div></div><p class="muted">এটি নিরাপদ ডেমো কনসোল; ফোনের আসল shell command চালায় না।</p></section>
-<footer>HORIZON BLUE · Mobile Edition · v1.0</footer>
-</main></div><script src="app.js"></script>
-</body></html>
+
+<section class="page show" id="home">
+  <div class="hero">
+    <div class="orb">HB</div>
+    <p class="eyebrow">PERSONAL CYBER TOOLKIT</p>
+    <h1>HORIZON <em>BLUE</em></h1>
+    <p>Explore • Secure • Control</p>
+    <div class="hero-actions">
+      <button data-go="password">Password Lab</button>
+      <button class="secondary" data-go="security">Security Check</button>
+    </div>
+  </div>
+
+  <div class="tiles">
+    <button data-go="password">
+      <strong>🔑</strong>
+      <b>Password Lab</b>
+      <small>Secure password generator</small>
+    </button>
+    <button data-go="network">
+      <strong>🌐</strong>
+      <b>Network Lab</b>
+      <small>Connection information</small>
+    </button>
+    <button data-go="security">
+      <strong>🛡</strong>
+      <b>Security Lab</b>
+      <small>Account protection</small>
+    </button>
+    <button data-go="location">
+      <strong>📍</strong>
+      <b>Location</b>
+      <small>Own device location</small>
+    </button>
+  </div>
+  <p class="note">HORIZON BLUE — Personal Security Toolkit</p>
+</section>
+
+<section class="page" id="password">
+<h2>Password Lab</h2>
+<div class="panel">
+  <label>Password Length: <b id="lenval">20</b></label>
+  <input id="length" type="range" min="8" max="64" value="20">
+  <div class="checks">
+    <label><input type="checkbox" id="upper" checked> A-Z</label>
+    <label><input type="checkbox" id="lower" checked> a-z</label>
+    <label><input type="checkbox" id="nums" checked> 0-9</label>
+    <label><input type="checkbox" id="symbols" checked> Symbols</label>
+  </div>
+  <button id="generate">Generate Password</button>
+  <div class="result">
+    <code id="passwordOut">Password here</code>
+    <button id="copyPass" class="secondary">Copy</button>
+  </div>
+  <p id="passMsg" class="muted">Generated locally on your device.</p>
+</div>
+
+<div class="panel">
+  <h3>Passphrase Generator</h3>
+  <input id="clue" placeholder="Blue, Mountain, Star">
+  <button id="makePhrase">Create Passphrase</button>
+  <div class="result">
+    <code id="phraseOut">—</code>
+    <button id="copyPhrase" class="secondary">Copy</button>
+  </div>
+</div>
+</section>
+
+<section class="page" id="network">
+<h2>Network Lab</h2>
+<div class="panel">
+  <div class="stat"><span>Online Status</span><b id="online">—</b></div>
+  <div class="stat"><span>Connection</span><b id="connection">—</b></div>
+  <div class="stat"><span>Language</span><b id="lang">—</b></div>
+  <div class="stat"><span>Platform</span><b id="platform">—</b></div>
+  <button id="refreshNet" class="secondary">Refresh</button>
+</div>
+</section>
+
+<section class="page" id="security">
+<h2>Security Lab</h2>
+<div class="panel">
+<h3>Account Security Checklist</h3>
+<label class="checkrow"><input type="checkbox"> Unique Passwords</label>
+<label class="checkrow"><input type="checkbox"> Two Factor Authentication</label>
+<label class="checkrow"><input type="checkbox"> Updated Recovery Email</label>
+<label class="checkrow"><input type="checkbox"> Check Login Sessions</label>
+<label class="checkrow"><input type="checkbox"> Remove Unknown Apps</label>
+</div>
+</section>
+
+<section class="page" id="location">
+<h2>Location Intelligence</h2>
+<div class="panel">
+<p>Get your own device location with permission.</p>
+<button id="locate">Get My Location</button>
+<p id="locout" class="result">Location not requested.</p>
+</div>
+</section>
+
+<section class="page" id="device">
+<h2>Device Monitor</h2>
+<div class="panel">
+<div class="stat"><span>Screen</span><b id="screen">—</b></div>
+<div class="stat"><span>Browser</span><b id="browser">—</b></div>
+<div class="stat"><span>CPU Cores</span><b id="cores">—</b></div>
+<div class="stat"><span>Memory</span><b id="memory">—</b></div>
+<div class="stat"><span>Battery</span><b id="battery">—</b></div>
+<button id="refreshDevice" class="secondary">Refresh</button>
+</div>
+</section>
+
+<section class="page" id="terminal">
+<h2>NEXUS Terminal</h2>
+<div class="terminal">
+  <div id="termout">HORIZON BLUE SAFE CONSOLE v1.0
+Type help to see commands.</div>
+  <div class="termline">
+    <span>horizon@blue:~$</span>
+    <input id="command" autocomplete="off" placeholder="help">
+    <button id="run">Run</button>
+  </div>
+</div>
+<p class="muted">Safe demo console. Does not execute system commands.</p>
+</section>
+
+<footer>HORIZON BLUE · Android Edition · v1.0</footer>
+
+</main>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
