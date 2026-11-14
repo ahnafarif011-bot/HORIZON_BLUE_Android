@@ -2,10 +2,9 @@
 name: Build HORIZON BLUE APK
 
 on:
-  workflow_dispatch:
   push:
-    branches:
-      - main
+    branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -18,10 +17,10 @@ jobs:
 
     steps:
       - name: Checkout source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
@@ -34,16 +33,35 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v4
 
-      - name: Install Android platform and build tools
+      - name: Install SDK packages
         run: |
-          sdkmanager "platforms;android-35" "build-tools;35.0.0"
+          sdkmanager --install "platform-tools" "platforms;android-35" "build-tools;35.0.0"
+
+      - name: Check project files
+        run: |
+          ls -la
+          ls -la app
+          test -f app/build.gradle
+          test -d app/src
 
       - name: Build debug APK
-        run: gradle --no-daemon assembleDebug
+        run: |
+          gradle --no-daemon --stacktrace assembleDebug
 
       - name: Upload APK
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: HORIZON-BLUE-debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
+
+      - name: Upload build error reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: HORIZON-BLUE-build-reports
+          path: |
+            app/build/reports/
+            app/build/outputs/logs/
+          if-no-files-found: ignore
