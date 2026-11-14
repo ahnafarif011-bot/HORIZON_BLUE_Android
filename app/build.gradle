@@ -1,14 +1,38 @@
 plugins {
     id 'com.android.application'
 }
+
 android {
     namespace 'com.horizonblue.app'
     compileSdk 35
+
     defaultConfig {
         applicationId 'com.horizonblue.app'
         minSdk 23
         targetSdk 35
+
         versionCode 1
-        versionName '1.0'
+        versionName '1.0.0'
+
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+    }
+
+    buildTypes {
+        debug {
+            debuggable true
+            minifyEnabled false
+        }
+
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile(
+                'proguard-android-optimize.txt'
+            ), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 }
