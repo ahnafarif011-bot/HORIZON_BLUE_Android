@@ -1,22 +1,24 @@
+const fpButton = $('fingerprintAuth');
+const fpStatus = $('fingerprintStatus');
 
-plugins {
-    id 'com.android.application'
+if (fpButton && fpStatus) {
+  fpButton.addEventListener('click', () => {
+    fpStatus.textContent = 'Biometric authentication প্রস্তুত হচ্ছে...';
+
+    if (window.HorizonBiometric &&
+        typeof window.HorizonBiometric.authenticate === 'function') {
+      window.HorizonBiometric.authenticate();
+    } else {
+      fpStatus.textContent =
+        'Android biometric connection এখনো যুক্ত হয়নি।';
+    }
+  });
 }
 
-android {
-    namespace 'com.horizonblue.app'
-    compileSdk 35
+window.onBiometricResult = function(success, message) {
+  if (!fpStatus) return;
 
-    defaultConfig {
-        applicationId 'com.horizonblue.app'
-        minSdk 23
-        targetSdk 35
-        versionCode 1
-        versionName '1.0'
-    }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
-    }
-}
+  fpStatus.textContent = success
+    ? '✓ Authentication successful'
+    : 'Authentication failed: ' + message;
+};
