@@ -46,7 +46,8 @@
     </div>
   </div>
 
-  <div class="tiles"><button data-go="fingerprint">
+  <div class="tiles">
+    <button data-go="fingerprint">
   <strong>👆</strong>
   <b>Fingerprint Lab</b>
   <small>Biometric authentication</small>
@@ -76,6 +77,23 @@
 </section>
 
 <section class="page" id="password">
+  <section class="page" id="fingerprint">
+  <h2>Fingerprint Lab</h2>
+
+  <div class="panel">
+    <div class="orb">👆</div>
+    <h3>Biometric Authentication</h3>
+    <p>Verify your identity using your phone's supported biometric security.</p>
+
+    <button id="fingerprintAuth">
+      Authenticate with Fingerprint
+    </button>
+
+    <p id="fingerprintStatus" class="muted">
+      Authentication not started.
+    </p>
+  </div>
+</section>
 <h2>Password Lab</h2>
 <div class="panel">
   <label>Password Length: <b id="lenval">20</b></label>
