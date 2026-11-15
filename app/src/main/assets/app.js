@@ -17,3 +17,27 @@ const help='Available safe commands: help, status, date, tools, clear';function 
 $('run').onclick=run;$('command').addEventListener('keydown',e=>{if(e.key==='Enter')run()});
 let deferred;window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;$('install').classList.remove('hidden')});$('install').onclick=async()=>{if(deferred){deferred.prompt();deferred=null}};
 if('serviceWorker'in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
+const fpButton = $('fingerprintAuth');
+const fpStatus = $('fingerprintStatus');
+
+if (fpButton && fpStatus) {
+  fpButton.addEventListener('click', () => {
+    fpStatus.textContent = 'Biometric authentication প্রস্তুত হচ্ছে...';
+
+    if (window.HorizonBiometric &&
+        typeof window.HorizonBiometric.authenticate === 'function') {
+      window.HorizonBiometric.authenticate();
+    } else {
+      fpStatus.textContent =
+        'Android biometric connection এখনো যুক্ত হয়নি।';
+    }
+  });
+}
+
+window.onBiometricResult = function(success, message) {
+  if (!fpStatus) return;
+
+  fpStatus.textContent = success
+    ? '✓ Authentication successful'
+    : 'Authentication failed: ' + message;
+};
