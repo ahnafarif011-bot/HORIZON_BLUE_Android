@@ -369,3 +369,50 @@ if ('serviceWorker' in navigator &&
     location.protocol.startsWith('http')) {
   navigator.serviceWorker.register('./sw.js').catch(() => {});
   }
+
+/* HORIZON BLUE - License Center UI v2.1 */
+
+(() => {
+  const $ = id => document.getElementById(id);
+
+  const keyInput = $("licenseKey");
+  const activateBtn = $("activateLicense");
+  const message = $("licenseMessage");
+
+  if (!keyInput || !activateBtn || !message) return;
+
+  function showLicenseMessage(text, color) {
+    message.textContent = text;
+    message.style.color = color;
+  }
+
+  function updateLicenseUI() {
+    $("licenseEdition").textContent = "Free Edition";
+    $("licenseStatus").textContent = "Not Activated";
+    $("licenseExpiry").textContent = "—";
+  }
+
+  activateBtn.addEventListener("click", async () => {
+    const key = keyInput.value.trim();
+
+    if (!key) {
+      showLicenseMessage("Please enter your activation key.", "#ff7070");
+      return;
+    }
+
+    if (!/^HB-PRO-[A-Z0-9]{4}-[A-Z0-9]{4}$/i.test(key)) {
+      showLicenseMessage(
+        "Invalid key format. Example: HB-PRO-1234-ABCD",
+        "#ff7070"
+      );
+      return;
+    }
+
+    showLicenseMessage(
+      "License server is not connected yet. Verification is unavailable.",
+      "#ffc66d"
+    );
+  });
+
+  updateLicenseUI();
+})();
