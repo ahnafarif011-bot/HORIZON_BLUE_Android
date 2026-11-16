@@ -1,43 +1,371 @@
-const $=id=>document.getElementById(id);
-function page(name){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('show',p.id===name));document.querySelectorAll('.navbtn').forEach(b=>b.classList.toggle('active',b.dataset.page===name));window.scrollTo(0,0)}
-document.querySelectorAll('[data-page]').forEach(b=>b.addEventListener('click',()=>page(b.dataset.page)));
-document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>page(b.dataset.go)));
-$('length').addEventListener('input',e=>$('lenval').textContent=e.target.value);
-function secureRandom(n){const a=new Uint32Array(n);crypto.getRandomValues(a);return a}
-$('generate').onclick=()=>{let chars='';if($('upper').checked)chars+='ABCDEFGHIJKLMNOPQRSTUVWXYZ';if($('lower').checked)chars+='abcdefghijklmnopqrstuvwxyz';if($('nums').checked)chars+='0123456789';if($('symbols').checked)chars+='!@#$%^&*()-_=+[]{}?';if(!chars){$('passMsg').textContent='অন্তত একটি character set নির্বাচন করো।';return}const n=+$('length').value, r=secureRandom(n);let out='';for(let i=0;i<n;i++)out+=chars[r[i]%chars.length];$('passwordOut').textContent=out;$('passMsg').textContent='তৈরি হয়েছে। নিরাপদ password manager-এ সংরক্ষণ করো।'};
-$('copyPass').onclick=()=>copyText($('passwordOut').textContent);$('copyPhrase').onclick=()=>copyText($('phraseOut').textContent);
-async function copyText(t){try{await navigator.clipboard.writeText(t);$('passMsg').textContent='Copied.'}catch{$('passMsg').textContent='Copy unavailable; manually select the text.'}}
-$('makePhrase').onclick=()=>{const words=$('clue').value.split(/[,\s]+/).map(x=>x.trim()).filter(Boolean).slice(0,3);if(!words.length){$('phraseOut').textContent='আগে কিছু শব্দ লিখুন';return}const extra=['Blue','Orbit','Nova','River','Sky'];const r=secureRandom(2);$('phraseOut').textContent=words.join('-')+'-'+extra[r[0]%extra.length]+'-'+(1000+r[1]%9000)};
-function net(){ $('online').textContent=navigator.onLine?'Online':'Offline';$('connection').textContent=navigator.connection?.effectiveType||'Not exposed';$('lang').textContent=navigator.language||'—';$('platform').textContent=navigator.userAgentData?.platform||navigator.platform||'Not exposed'}
-$('refreshNet').onclick=net;window.addEventListener('online',net);window.addEventListener('offline',net);net();
-function device(){ $('screen').textContent=screen.width+' × '+screen.height+' · '+devicePixelRatio+'x';$('browser').textContent=navigator.userAgentData?.brands?.map(x=>x.brand).join(', ')||'Browser info limited';$('cores').textContent=navigator.hardwareConcurrency||'Not exposed';$('memory').textContent=navigator.deviceMemory?navigator.deviceMemory+' GB (approx.)':'Not exposed';if(navigator.getBattery){navigator.getBattery().then(b=>$('battery').textContent=Math.round(b.level*100)+'%'+(b.charging?' · charging':''))}}
-$('refreshDevice').onclick=device;device();
-$('locate').onclick=()=>{if(!navigator.geolocation){$('locout').textContent='এই ব্রাউজারে geolocation নেই।';return}$('locout').textContent='অনুমতির অপেক্ষায়…';navigator.geolocation.getCurrentPosition(p=>{const lat=p.coords.latitude.toFixed(5),lon=p.coords.longitude.toFixed(5);$('locout').textContent=`Latitude: ${lat}, Longitude: ${lon} · Accuracy: ${Math.round(p.coords.accuracy)} m`;},e=>$('locout').textContent='অবস্থান পাওয়া যায়নি: '+e.message,{enableHighAccuracy:true,timeout:12000})};
-const help='Available safe commands: help, status, date, tools, clear';function run(){const c=$('command').value.trim().toLowerCase();let out='';if(c==='help')out=help;else if(c==='status')out='HORIZON BLUE Mobile Edition: running\\nNetwork: '+(navigator.onLine?'online':'offline');else if(c==='date')out=new Date().toString();else if(c==='tools')out='Password Lab | Network Lab | Security Lab | Location | Device Monitor';else if(c==='clear')$('termout').textContent='';else out='Unknown command. Type help.';if(c!=='clear')$('termout').textContent+='\\n\\n'+out;$('command').value=''}
-$('run').onclick=run;$('command').addEventListener('keydown',e=>{if(e.key==='Enter')run()});
-let deferred;window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;$('install').classList.remove('hidden')});$('install').onclick=async()=>{if(deferred){deferred.prompt();deferred=null}};
-if('serviceWorker'in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
+'use strict';
+
+const $ = id => document.getElementById(id);
+
+// Navigation
+function page(name) {
+  document.querySelectorAll('.page').forEach(p =>
+    p.classList.toggle('show', p.id === name)
+  );
+  document.querySelectorAll('.navbtn').forEach(b =>
+    b.classList.toggle('active', b.dataset.page === name)
+  );
+  window.scrollTo(0, 0);
+}
+
+document.querySelectorAll('[data-page]').forEach(b =>
+  b.addEventListener('click', () => page(b.dataset.page))
+);
+
+document.querySelectorAll('[data-go]').forEach(b =>
+  b.addEventListener('click', () => page(b.dataset.go))
+);
+
+// Cryptographically secure unbiased random number
+function secureIndex(max) {
+  if (!Number.isSafeInteger(max) || max < 1 || max > 4294967296) {
+    throw new Error('Invalid random range');
+  }
+
+  const limit = Math.floor(4294967296 / max) * max;
+  const data = new Uint32Array(1);
+  let value;
+
+  do {
+    crypto.getRandomValues(data);
+    value = data[0];
+  } while (value >= limit);
+
+  return value % max;
+}
+
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = secureIndex(i + 1);
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+// Password generator
+let currentPassword = '';
+let passwordVisible = false;
+
+$('length').addEventListener('input', e => {
+  $('lenval').textContent = e.target.value;
+});
+
+function updateStrength(password) {
+  let score = 0;
+
+  if (password.length >= 12) score++;
+  if (password.length >= 20) score++;
+  if (/[A-Z]/.test(password)) score++;
+  if (/[a-z]/.test(password)) score++;
+  if (/[0-9]/.test(password)) score++;
+  if (/[^A-Za-z0-9]/.test(password)) score++;
+
+  const percent = Math.round(score / 6 * 100);
+  $('strengthBar').style.width = percent + '%';
+
+  const label = score <= 2 ? 'Weak' :
+                score <= 4 ? 'Medium' : 'Strong';
+
+  $('strengthText').textContent =
+    'Strength: ' + label + ' · ' + percent + '%';
+}
+
+function generatePassword() {
+  if (!window.crypto?.getRandomValues) {
+    $('passMsg').textContent =
+      'Secure random generator unavailable.';
+    return;
+  }
+
+  const groups = [];
+
+  if ($('upper').checked) groups.push('ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+  if ($('lower').checked) groups.push('abcdefghijklmnopqrstuvwxyz');
+  if ($('nums').checked) groups.push('0123456789');
+  if ($('symbols').checked) groups.push('!@#$%^&*()-_=+[]{}?');
+
+  if (!groups.length) {
+    $('passMsg').textContent =
+      'Select at least one character type.';
+    return;
+  }
+
+  const length = Number($('length').value);
+
+  if (length < groups.length) {
+    $('passMsg').textContent =
+      'Password length is too short for selected types.';
+    return;
+  }
+
+  const pool = groups.join('');
+  const chars = groups.map(group =>
+    group[secureIndex(group.length)]
+  );
+
+  while (chars.length < length) {
+    chars.push(pool[secureIndex(pool.length)]);
+  }
+
+  currentPassword = shuffle(chars).join('');
+  passwordVisible = false;
+
+  $('passwordOut').textContent = '•'.repeat(length);
+  $('togglePass').textContent = 'Show';
+
+  updateStrength(currentPassword);
+  $('passMsg').textContent =
+    'Password generated locally. It is not saved or uploaded.';
+}
+
+$('generate').addEventListener('click', generatePassword);
+
+$('togglePass').addEventListener('click', () => {
+  if (!currentPassword) return;
+
+  passwordVisible = !passwordVisible;
+
+  $('passwordOut').textContent =
+    passwordVisible ? currentPassword : '•'.repeat(currentPassword.length);
+
+  $('togglePass').textContent =
+    passwordVisible ? 'Hide' : 'Show';
+});
+
+// Clipboard
+async function copyText(text) {
+  if (!text || text === '—' || text === 'Password here') return;
+
+  try {
+    if (!navigator.clipboard?.writeText) {
+      throw new Error('Clipboard unavailable');
+    }
+
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+$('copyPass').addEventListener('click', async () => {
+  if (!currentPassword) {
+    $('passMsg').textContent = 'Generate a password first.';
+    return;
+  }
+
+  const ok = await copyText(currentPassword);
+  $('passMsg').textContent = ok
+    ? 'Password copied.'
+    : 'Copy unavailable. Select and copy manually.';
+});
+
+$('copyPhrase').addEventListener('click', async () => {
+  const phrase = $('phraseOut').dataset.value || '';
+  const ok = await copyText(phrase);
+  $('passMsg').textContent = ok
+    ? 'Passphrase copied.'
+    : 'Copy unavailable.';
+});
+
+// Passphrase helper
+$('makePhrase').addEventListener('click', () => {
+  const words = $('clue').value
+    .split(/[,\s]+/)
+    .map(w => w.trim())
+    .filter(Boolean)
+    .slice(0, 3);
+
+  if (!words.length) {
+    $('phraseOut').textContent = 'Enter some words first.';
+    return;
+  }
+
+  const extras = ['Orbit', 'Nova', 'River', 'Sky', 'Forest',
+                  'Silver', 'Cloud', 'Ocean', 'Comet', 'Amber'];
+
+  const extra = extras[secureIndex(extras.length)];
+  const number = 10000 + secureIndex(90000);
+
+  const phrase = [...words, extra, String(number)].join('-');
+
+  $('phraseOut').textContent = phrase;
+  $('phraseOut').dataset.value = phrase;
+});
+
+// Network monitor
+function net() {
+  $('online').textContent =
+    navigator.onLine ? 'Online' : 'Offline';
+
+  $('connection').textContent =
+    navigator.connection?.effectiveType || 'Not exposed';
+
+  $('lang').textContent = navigator.language || '—';
+
+  $('platform').textContent =
+    navigator.userAgentData?.platform ||
+    navigator.platform || 'Not exposed';
+}
+
+$('refreshNet').addEventListener('click', net);
+window.addEventListener('online', net);
+window.addEventListener('offline', net);
+net();
+
+// Device monitor
+async function device() {
+  $('screen').textContent =
+    screen.width + ' × ' + screen.height +
+    ' · ' + devicePixelRatio + 'x';
+
+  $('browser').textContent =
+    navigator.userAgentData?.brands?.map(x => x.brand).join(', ') ||
+    'Browser info limited';
+
+  $('cores').textContent =
+    navigator.hardwareConcurrency || 'Not exposed';
+
+  $('memory').textContent =
+    navigator.deviceMemory
+      ? navigator.deviceMemory + ' GB (approx.)'
+      : 'Not exposed';
+
+  $('battery').textContent = 'Checking...';
+
+  try {
+    if (navigator.getBattery) {
+      const battery = await navigator.getBattery();
+
+      $('battery').textContent =
+        Math.round(battery.level * 100) + '%' +
+        (battery.charging ? ' · Charging' : '');
+
+      battery.addEventListener('levelchange', device);
+      battery.addEventListener('chargingchange', device);
+    } else {
+      $('battery').textContent = 'Not exposed';
+    }
+  } catch {
+    $('battery').textContent = 'Unavailable';
+  }
+}
+
+$('refreshDevice').addEventListener('click', device);
+device();
+
+// Security checklist
+function updateSecurity() {
+  const checks = [...document.querySelectorAll('.securityCheck')];
+  const done = checks.filter(c => c.checked).length;
+  const percent = Math.round(done / checks.length * 100);
+
+  $('securityCount').textContent = done + ' / ' + checks.length;
+  $('securityBar').style.width = percent + '%';
+  $('securityPercent').textContent = percent + '% completed';
+}
+
+document.querySelectorAll('.securityCheck').forEach(c =>
+  c.addEventListener('change', updateSecurity)
+);
+updateSecurity();
+
+// Own device location
+$('locate').addEventListener('click', () => {
+  if (!navigator.geolocation) {
+    $('locout').textContent = 'Geolocation unavailable.';
+    return;
+  }
+
+  $('locout').textContent = 'Waiting for permission...';
+
+  navigator.geolocation.getCurrentPosition(
+    p => {
+      const lat = p.coords.latitude.toFixed(5);
+      const lon = p.coords.longitude.toFixed(5);
+
+      $('locout').textContent =
+        'Latitude: ' + lat +
+        ' · Longitude: ' + lon +
+        ' · Accuracy: ' + Math.round(p.coords.accuracy) + ' m';
+    },
+    e => {
+      $('locout').textContent = 'Location unavailable: ' + e.message;
+    },
+    {
+      enableHighAccuracy: true,
+      timeout: 12000,
+      maximumAge: 0
+    }
+  );
+});
+
+// Safe demo terminal
+const help =
+  'Available safe commands: help, status, date, tools, clear';
+
+function run() {
+  const command = $('command').value.trim().toLowerCase();
+  let output = '';
+
+  if (command === 'help') {
+    output = help;
+  } else if (command === 'status') {
+    output = 'HORIZON BLUE PRO: Running\nNetwork: ' +
+      (navigator.onLine ? 'Online' : 'Offline');
+  } else if (command === 'date') {
+    output = new Date().toString();
+  } else if (command === 'tools') {
+    output =
+      'Password | Fingerprint | Network | Security | Location | Device';
+  } else if (command === 'clear') {
+    $('termout').textContent = 'Console cleared.';
+  } else if (command) {
+    output = 'Unknown command. Type help.';
+  }
+
+  if (command && command !== 'clear') {
+    $('termout').textContent += '\n\n' + output;
+  }
+
+  $('command').value = '';
+}
+
+$('run').addEventListener('click', run);
+
+$('command').addEventListener('keydown', e => {
+  if (e.key === 'Enter') run();
+});
+
+// Android biometric bridge
 const fpButton = $('fingerprintAuth');
 const fpStatus = $('fingerprintStatus');
 
-if (fpButton && fpStatus) {
-  fpButton.addEventListener('click', () => {
-    fpStatus.textContent = 'Biometric authentication প্রস্তুত হচ্ছে...';
+fpButton.addEventListener('click', () => {
+  fpStatus.textContent = 'Preparing biometric authentication...';
 
-    if (window.HorizonBiometric &&
-        typeof window.HorizonBiometric.authenticate === 'function') {
-      window.HorizonBiometric.authenticate();
-    } else {
-      fpStatus.textContent =
-        'Android biometric connection এখনো যুক্ত হয়নি।';
-    }
-  });
-}
+  if (window.HorizonBiometric &&
+      typeof window.HorizonBiometric.authenticate === 'function') {
+    window.HorizonBiometric.authenticate();
+  } else {
+    fpStatus.textContent =
+      'Android biometric connection is not available.';
+  }
+});
 
 window.onBiometricResult = function(success, message) {
-  if (!fpStatus) return;
-
   fpStatus.textContent = success
     ? '✓ Authentication successful'
-    : 'Authentication failed: ' + message;
+    : 'Authentication failed: ' + String(message || 'Unknown error');
 };
+
+// Safe service worker registration
+if ('serviceWorker' in navigator &&
+    location.protocol.startsWith('http')) {
+  navigator.serviceWorker.register('./sw.js').catch(() => {});
+  }
