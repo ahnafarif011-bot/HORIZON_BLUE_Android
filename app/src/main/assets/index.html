@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#061329">
-<meta name="description" content="HORIZON BLUE Personal Security Toolkit">
-<title>HORIZON BLUE</title>
+<meta name="description" content="HORIZON BLUE Premium Personal Security Toolkit">
+<title>HORIZON BLUE PRO</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -14,17 +14,18 @@
   <div class="brand">
     <span class="mark">HB</span>
     <div>
-      <b>HORIZON BLUE</b>
+      <b>HORIZON BLUE <span class="pro">PRO</span></b>
       <small>Explore • Secure • Control</small>
     </div>
   </div>
+  <span class="version">v2.0</span>
 </header>
 
 <div class="layout">
 <nav class="nav" id="nav">
   <button class="navbtn active" data-page="home">⌂ Home</button>
   <button class="navbtn" data-page="password">🔐 Password</button>
-  <button class="navbtn" data-page="fingerprint">👆 Fingerprint Lab</button>
+  <button class="navbtn" data-page="fingerprint">👆 Fingerprint</button>
   <button class="navbtn" data-page="network">🌐 Network</button>
   <button class="navbtn" data-page="security">🛡 Security</button>
   <button class="navbtn" data-page="location">📍 Location</button>
@@ -37,7 +38,7 @@
 <section class="page show" id="home">
   <div class="hero">
     <div class="orb">HB</div>
-    <p class="eyebrow">PERSONAL CYBER TOOLKIT</p>
+    <p class="eyebrow">PREMIUM PERSONAL CYBER TOOLKIT</p>
     <h1>HORIZON <em>BLUE</em></h1>
     <p>Explore • Secure • Control</p>
     <div class="hero-actions">
@@ -47,142 +48,142 @@
   </div>
 
   <div class="tiles">
-    <button data-go="fingerprint">
-  <strong>👆</strong>
-  <b>Fingerprint Lab</b>
-  <small>Biometric authentication</small>
-  </button>
     <button data-go="password">
-      <strong>🔑</strong>
-      <b>Password Lab</b>
+      <strong>🔑</strong><b>Password Lab</b>
       <small>Secure password generator</small>
     </button>
+    <button data-go="fingerprint">
+      <strong>👆</strong><b>Fingerprint Lab</b>
+      <small>Biometric authentication</small>
+    </button>
     <button data-go="network">
-      <strong>🌐</strong>
-      <b>Network Lab</b>
+      <strong>🌐</strong><b>Network Lab</b>
       <small>Connection information</small>
     </button>
     <button data-go="security">
-      <strong>🛡</strong>
-      <b>Security Lab</b>
+      <strong>🛡</strong><b>Security Lab</b>
       <small>Account protection</small>
     </button>
     <button data-go="location">
-      <strong>📍</strong>
-      <b>Location</b>
+      <strong>📍</strong><b>Location</b>
       <small>Own device location</small>
     </button>
+    <button data-go="device">
+      <strong>▣</strong><b>Device Monitor</b>
+      <small>Device information</small>
+    </button>
   </div>
-  <p class="note">HORIZON BLUE — Personal Security Toolkit</p>
+  <p class="note">HORIZON BLUE PRO · Personal Security Toolkit</p>
 </section>
 
 <section class="page" id="password">
-  <section class="page" id="fingerprint">
-  <h2>Fingerprint Lab</h2>
+  <h2>Password Lab <span class="pro">PRO</span></h2>
+  <div class="panel">
+    <h3>Secure Password Generator</h3>
+    <label>Password Length: <b id="lenval">20</b></label>
+    <input id="length" type="range" min="8" max="64" value="20">
+    <div class="checks">
+      <label><input type="checkbox" id="upper" checked> A-Z</label>
+      <label><input type="checkbox" id="lower" checked> a-z</label>
+      <label><input type="checkbox" id="nums" checked> 0-9</label>
+      <label><input type="checkbox" id="symbols" checked> Symbols</label>
+    </div>
+    <button id="generate">Generate Password</button>
+    <div class="result">
+      <code id="passwordOut">Password here</code>
+      <button id="togglePass" class="secondary">Show</button>
+      <button id="copyPass" class="secondary">Copy</button>
+    </div>
+    <div class="meter"><span id="strengthBar"></span></div>
+    <p id="strengthText" class="muted">Generate a password to check strength.</p>
+    <p id="passMsg" class="muted">Generated locally on your device.</p>
+  </div>
 
+  <div class="panel">
+    <h3>Passphrase Generator</h3>
+    <input id="clue" placeholder="Enter words separated by commas">
+    <button id="makePhrase">Create Passphrase</button>
+    <div class="result">
+      <code id="phraseOut">—</code>
+      <button id="copyPhrase" class="secondary">Copy</button>
+    </div>
+    <p class="muted">Use several unpredictable words. This tool does not save your input.</p>
+  </div>
+</section>
+
+<section class="page" id="fingerprint">
+  <h2>Fingerprint Lab</h2>
   <div class="panel">
     <div class="orb">👆</div>
     <h3>Biometric Authentication</h3>
     <p>Verify your identity using your phone's supported biometric security.</p>
-
-    <button id="fingerprintAuth">
-      Authenticate with Fingerprint
-    </button>
-
-    <p id="fingerprintStatus" class="muted">
-      Authentication not started.
-    </p>
+    <button id="fingerprintAuth">Authenticate with Fingerprint</button>
+    <p id="fingerprintStatus" class="muted">Authentication not started.</p>
   </div>
-</section>
-<h2>Password Lab</h2>
-<div class="panel">
-  <label>Password Length: <b id="lenval">20</b></label>
-  <input id="length" type="range" min="8" max="64" value="20">
-  <div class="checks">
-    <label><input type="checkbox" id="upper" checked> A-Z</label>
-    <label><input type="checkbox" id="lower" checked> a-z</label>
-    <label><input type="checkbox" id="nums" checked> 0-9</label>
-    <label><input type="checkbox" id="symbols" checked> Symbols</label>
-  </div>
-  <button id="generate">Generate Password</button>
-  <div class="result">
-    <code id="passwordOut">Password here</code>
-    <button id="copyPass" class="secondary">Copy</button>
-  </div>
-  <p id="passMsg" class="muted">Generated locally on your device.</p>
-</div>
-
-<div class="panel">
-  <h3>Passphrase Generator</h3>
-  <input id="clue" placeholder="Blue, Mountain, Star">
-  <button id="makePhrase">Create Passphrase</button>
-  <div class="result">
-    <code id="phraseOut">—</code>
-    <button id="copyPhrase" class="secondary">Copy</button>
-  </div>
-</div>
 </section>
 
 <section class="page" id="network">
-<h2>Network Lab</h2>
-<div class="panel">
-  <div class="stat"><span>Online Status</span><b id="online">—</b></div>
-  <div class="stat"><span>Connection</span><b id="connection">—</b></div>
-  <div class="stat"><span>Language</span><b id="lang">—</b></div>
-  <div class="stat"><span>Platform</span><b id="platform">—</b></div>
-  <button id="refreshNet" class="secondary">Refresh</button>
-</div>
+  <h2>Network Lab</h2>
+  <div class="panel">
+    <div class="stat"><span>Online Status</span><b id="online">—</b></div>
+    <div class="stat"><span>Connection</span><b id="connection">—</b></div>
+    <div class="stat"><span>Language</span><b id="lang">—</b></div>
+    <div class="stat"><span>Platform</span><b id="platform">—</b></div>
+    <button id="refreshNet" class="secondary">Refresh</button>
+  </div>
 </section>
 
 <section class="page" id="security">
-<h2>Security Lab</h2>
-<div class="panel">
-<h3>Account Security Checklist</h3>
-<label class="checkrow"><input type="checkbox"> Unique Passwords</label>
-<label class="checkrow"><input type="checkbox"> Two Factor Authentication</label>
-<label class="checkrow"><input type="checkbox"> Updated Recovery Email</label>
-<label class="checkrow"><input type="checkbox"> Check Login Sessions</label>
-<label class="checkrow"><input type="checkbox"> Remove Unknown Apps</label>
-</div>
+  <h2>Security Center</h2>
+  <div class="panel">
+    <h3>Account Security Checklist</h3>
+    <div class="stat"><span>Completed</span><b id="securityCount">0 / 5</b></div>
+    <div class="meter"><span id="securityBar"></span></div>
+    <p id="securityPercent" class="muted">0% completed</p>
+    <label class="checkrow"><input type="checkbox" class="securityCheck"> Unique Passwords</label>
+    <label class="checkrow"><input type="checkbox" class="securityCheck"> Two Factor Authentication</label>
+    <label class="checkrow"><input type="checkbox" class="securityCheck"> Updated Recovery Email</label>
+    <label class="checkrow"><input type="checkbox" class="securityCheck"> Check Login Sessions</label>
+    <label class="checkrow"><input type="checkbox" class="securityCheck"> Remove Unknown Apps</label>
+  </div>
 </section>
 
 <section class="page" id="location">
-<h2>Location Intelligence</h2>
-<div class="panel">
-<p>Get your own device location with permission.</p>
-<button id="locate">Get My Location</button>
-<p id="locout" class="result">Location not requested.</p>
-</div>
+  <h2>Location Intelligence</h2>
+  <div class="panel">
+    <p>Get your own device location with permission.</p>
+    <button id="locate">Get My Location</button>
+    <p id="locout" class="result">Location not requested.</p>
+  </div>
 </section>
 
 <section class="page" id="device">
-<h2>Device Monitor</h2>
-<div class="panel">
-<div class="stat"><span>Screen</span><b id="screen">—</b></div>
-<div class="stat"><span>Browser</span><b id="browser">—</b></div>
-<div class="stat"><span>CPU Cores</span><b id="cores">—</b></div>
-<div class="stat"><span>Memory</span><b id="memory">—</b></div>
-<div class="stat"><span>Battery</span><b id="battery">—</b></div>
-<button id="refreshDevice" class="secondary">Refresh</button>
-</div>
+  <h2>Device Monitor</h2>
+  <div class="panel">
+    <div class="stat"><span>Screen</span><b id="screen">—</b></div>
+    <div class="stat"><span>Browser</span><b id="browser">—</b></div>
+    <div class="stat"><span>CPU Cores</span><b id="cores">—</b></div>
+    <div class="stat"><span>Memory</span><b id="memory">—</b></div>
+    <div class="stat"><span>Battery</span><b id="battery">—</b></div>
+    <button id="refreshDevice" class="secondary">Refresh</button>
+  </div>
 </section>
 
 <section class="page" id="terminal">
-<h2>NEXUS Terminal</h2>
-<div class="terminal">
-  <div id="termout">HORIZON BLUE SAFE CONSOLE v1.0
+  <h2>NEXUS Terminal</h2>
+  <div class="terminal">
+    <div id="termout">HORIZON BLUE SAFE CONSOLE v2.0
 Type help to see commands.</div>
-  <div class="termline">
-    <span>horizon@blue:~$</span>
-    <input id="command" autocomplete="off" placeholder="help">
-    <button id="run">Run</button>
+    <div class="termline">
+      <span>horizon@blue:~$</span>
+      <input id="command" autocomplete="off" placeholder="help">
+      <button id="run">Run</button>
+    </div>
   </div>
-</div>
-<p class="muted">Safe demo console. Does not execute system commands.</p>
+  <p class="muted">Safe demo console. Does not execute system commands.</p>
 </section>
 
-<footer>HORIZON BLUE · Android Edition · v1.0</footer>
-
+<footer>HORIZON BLUE · Android Edition · v2.0</footer>
 </main>
 </div>
 
