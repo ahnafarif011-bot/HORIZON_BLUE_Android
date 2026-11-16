@@ -439,3 +439,53 @@ footer {
     flex-basis: 100%;
   }
 }
+/* HORIZON BLUE PRO ACTIVATION */
+
+#activation .panel {
+  border: 1px solid rgba(0, 217, 255, 0.22);
+  background: linear-gradient(145deg, #102847, #09172d);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
+}
+
+#activation .orb {
+  margin: 10px auto 20px;
+  border: 1px solid #00d9ff;
+  box-shadow: 0 0 25px rgba(0, 217, 255, 0.25);
+}
+
+#activation input {
+  width: 100%;
+  margin: 12px 0;
+  padding: 15px;
+  border: 1px solid rgba(0, 217, 255, 0.35);
+  border-radius: 12px;
+  background: #061329;
+  color: #edf6ff;
+  outline: none;
+}
+
+#activation input:focus {
+  border-color: #00d9ff;
+  box-shadow: 0 0 12px rgba(0, 217, 255, 0.18);
+}
+
+#activation #activateLicense {
+  width: 100%;
+  margin-top: 8px;
+  background: linear-gradient(90deg, #087bff, #00c8e8);
+  color: white;
+  font-weight: bold;
+}
+
+#activation .stat {
+  padding: 13px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+
+#activation .stat b {
+  color: #00d9ff;
+}
+
+#activation .muted {
+  line-height: 1.7;
+}
