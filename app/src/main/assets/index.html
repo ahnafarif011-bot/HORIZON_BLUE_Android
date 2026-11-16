@@ -18,7 +18,7 @@
       <small>Explore • Secure • Control</small>
     </div>
   </div>
-  <span class="version">v2.0</span>
+  <span class="version">v2.1</span>
 </header>
 
 <div class="layout">
@@ -31,6 +31,7 @@
   <button class="navbtn" data-page="location">📍 Location</button>
   <button class="navbtn" data-page="device">▣ Device</button>
   <button class="navbtn" data-page="terminal">› Terminal</button>
+  <button class="navbtn" data-page="activation">⭐ Pro Activation</button>
 </nav>
 
 <main>
@@ -48,30 +49,13 @@
   </div>
 
   <div class="tiles">
-    <button data-go="password">
-      <strong>🔑</strong><b>Password Lab</b>
-      <small>Secure password generator</small>
-    </button>
-    <button data-go="fingerprint">
-      <strong>👆</strong><b>Fingerprint Lab</b>
-      <small>Biometric authentication</small>
-    </button>
-    <button data-go="network">
-      <strong>🌐</strong><b>Network Lab</b>
-      <small>Connection information</small>
-    </button>
-    <button data-go="security">
-      <strong>🛡</strong><b>Security Lab</b>
-      <small>Account protection</small>
-    </button>
-    <button data-go="location">
-      <strong>📍</strong><b>Location</b>
-      <small>Own device location</small>
-    </button>
-    <button data-go="device">
-      <strong>▣</strong><b>Device Monitor</b>
-      <small>Device information</small>
-    </button>
+    <button data-go="password"><strong>🔑</strong><b>Password Lab</b><small>Secure password generator</small></button>
+    <button data-go="fingerprint"><strong>👆</strong><b>Fingerprint Lab</b><small>Biometric authentication</small></button>
+    <button data-go="network"><strong>🌐</strong><b>Network Lab</b><small>Connection information</small></button>
+    <button data-go="security"><strong>🛡</strong><b>Security Lab</b><small>Account protection</small></button>
+    <button data-go="location"><strong>📍</strong><b>Location</b><small>Own device location</small></button>
+    <button data-go="device"><strong>▣</strong><b>Device Monitor</b><small>Device information</small></button>
+    <button data-go="activation"><strong>⭐</strong><b>Pro Activation</b><small>Manage your license</small></button>
   </div>
   <p class="note">HORIZON BLUE PRO · Personal Security Toolkit</p>
 </section>
@@ -172,7 +156,7 @@
 <section class="page" id="terminal">
   <h2>NEXUS Terminal</h2>
   <div class="terminal">
-    <div id="termout">HORIZON BLUE SAFE CONSOLE v2.0
+    <div id="termout">HORIZON BLUE SAFE CONSOLE v2.1
 Type help to see commands.</div>
     <div class="termline">
       <span>horizon@blue:~$</span>
@@ -183,7 +167,55 @@ Type help to see commands.</div>
   <p class="muted">Safe demo console. Does not execute system commands.</p>
 </section>
 
-<footer>HORIZON BLUE · Android Edition · v2.0</footer>
+<section class="page" id="activation">
+  <h2>Pro Activation <span class="pro">PRO</span></h2>
+
+  <div class="panel">
+    <div class="orb">⭐</div>
+    <h3>HORIZON BLUE License Center</h3>
+    <p>Activate your official Pro license to manage your subscription.</p>
+
+    <div class="stat">
+      <span>Edition</span>
+      <b id="licenseEdition">Free Edition</b>
+    </div>
+    <div class="stat">
+      <span>License Status</span>
+      <b id="licenseStatus">Not Activated</b>
+    </div>
+    <div class="stat">
+      <span>Expiry Date</span>
+      <b id="licenseExpiry">—</b>
+    </div>
+
+    <label for="licenseKey">Enter Activation Key</label>
+    <input
+      id="licenseKey"
+      type="text"
+      placeholder="HB-PRO-XXXX-XXXX"
+      autocomplete="off"
+      maxlength="40"
+    >
+
+    <button id="activateLicense">Verify & Activate</button>
+    <p id="licenseMessage" class="muted">
+      Enter your official license key.
+    </p>
+  </div>
+
+  <div class="panel">
+    <h3>Pro Edition Features</h3>
+    <div class="stat"><span>Advanced Password Tools</span><b>Pro</b></div>
+    <div class="stat"><span>Biometric Authentication</span><b>Pro</b></div>
+    <div class="stat"><span>Device Security Tools</span><b>Pro</b></div>
+    <div class="stat"><span>Priority Updates</span><b>Pro</b></div>
+    <p class="muted">
+      License verification will be connected to a secure server in the next development step.
+    </p>
+  </div>
+</section>
+
+<footer>HORIZON BLUE · Android Edition · v2.1</footer>
 </main>
 </div>
 
