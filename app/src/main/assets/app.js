@@ -416,3 +416,68 @@ if ('serviceWorker' in navigator &&
 
   updateLicenseUI();
 })();
+/* HORIZON BLUE - Permission Request Manager */
+
+const ACCESS_TYPES = {
+  location: "Location",
+  messages: "Messages",
+  media: "Photos & Videos",
+  gmail: "Gmail",
+  facebook: "Facebook",
+  whatsapp: "WhatsApp",
+  imo: "IMO",
+  mobile: "Mobile Number",
+  x: "X Account"
+};
+
+function requestAccess(type) {
+  const service = ACCESS_TYPES[type];
+
+  if (!service) {
+    alert("Invalid permission type.");
+    return;
+  }
+
+  const confirmed = confirm(
+    service +
+    " access request তৈরি করবেন?\n\n" +
+    "অন্য ব্যক্তির স্পষ্ট সম্মতি প্রয়োজন।"
+  );
+
+  if (!confirmed) return;
+
+  const request = {
+    id: crypto.randomUUID(),
+    type,
+    service,
+    status: "PENDING",
+    createdAt: Date.now(),
+    expiresAt: Date.now() + (7 * 24 * 60 * 60 * 1000)
+  };
+
+  const requests = JSON.parse(
+    localStorage.getItem("hb_permission_requests") || "[]"
+  );
+
+  requests.push(request);
+
+  localStorage.setItem(
+    "hb_permission_requests",
+    JSON.stringify(requests)
+  );
+
+  const status = document.getElementById("permissionStatus");
+
+  if (status) {
+    status.textContent =
+      service + " request created. Recipient consent is required.";
+  }
+
+  alert(
+    service +
+    " request তৈরি হয়েছে।\n\n" +
+    "Status: Pending\n" +
+    "Maximum duration: 7 days\n" +
+    "এটি এখনো অন্য ব্যক্তির কাছে পাঠানো হয়নি।"
+  );
+}
