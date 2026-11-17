@@ -220,5 +220,76 @@ Type help to see commands.</div>
 </div>
 
 <script src="app.js"></script>
+  <!-- HORIZON BLUE PERMISSION MANAGER -->
+<section id="permissions" class="page">
+  <div class="panel">
+    <h2>Permission Manager</h2>
+    <p>Manage separate, consent-based access requests.</p>
+
+    <div class="permission-card">
+      <h3>📍 Location Access</h3>
+      <p>Share live location with explicit permission.</p>
+      <button onclick="requestAccess('location')">Request Access</button>
+    </div>
+
+    <div class="permission-card">
+      <h3>💬 Messages Access</h3>
+      <p>Only supported, authorized message access.</p>
+      <button onclick="requestAccess('messages')">Request Access</button>
+    </div>
+
+    <div class="permission-card">
+      <h3>🖼️ Photos & Videos</h3>
+      <p>Access only files explicitly selected and shared.</p>
+      <button onclick="requestAccess('media')">Request Access</button>
+    </div>
+
+    <div class="permission-card">
+      <h3>📧 Gmail</h3>
+      <p>Official Google authorization only.</p>
+      <button onclick="requestAccess('gmail')">Request Access</button>
+    </div>
+
+    <div class="permission-card">
+      <h3>Facebook</h3>
+      <p>Supported official account permissions only.</p>
+      <button onclick="requestAccess('facebook')">Request Access</button>
+    </div>
+
+    <div class="permission-card">
+      <h3>WhatsApp</h3>
+      <p>Official supported sharing and integrations only.</p>
+      <button onclick="requestAccess('whatsapp')">Request Access</button>
+    </div>
+
+    <div class="permission-card">
+      <h3>IMO</h3>
+      <p>Only authorized sharing features.</p>
+      <button onclick="requestAccess('imo')">Request Access</button>
+    </div>
+
+    <div class="permission-card">
+      <h3>Mobile Number</h3>
+      <p>Number verification with the owner's consent.</p>
+      <button onclick="requestAccess('mobile')">Request Access</button>
+    </div>
+
+    <div class="permission-card">
+      <h3>X Account</h3>
+      <p>Official account authorization only.</p>
+      <button onclick="requestAccess('x')">Request Access</button>
+    </div>
+
+    <div class="permission-card">
+      <h3>Access Duration</h3>
+      <p>Maximum permission period: 7 days.</p>
+      <strong>168 Hours</strong>
+    </div>
+
+    <div id="permissionStatus">
+      No access requests created yet.
+    </div>
+  </div>
+</section>
 </body>
 </html>
