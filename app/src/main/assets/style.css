@@ -489,3 +489,60 @@ footer {
 #activation .muted {
   line-height: 1.7;
 }
+/* HORIZON BLUE - Permission Manager Design */
+
+#permissions .panel {
+  padding: 20px;
+  border-radius: 18px;
+  background: linear-gradient(145deg, #0d203d, #09172c);
+  border: 1px solid rgba(0, 217, 255, 0.2);
+}
+
+#permissions h2 {
+  color: #00d9ff;
+  margin-bottom: 8px;
+}
+
+#permissions .permission-card {
+  background: rgba(22, 140, 255, 0.08);
+  border: 1px solid rgba(0, 217, 255, 0.18);
+  border-radius: 14px;
+  padding: 16px;
+  margin: 14px 0;
+}
+
+#permissions .permission-card h3 {
+  color: #edf6ff;
+  margin: 0 0 8px;
+  font-size: 17px;
+}
+
+#permissions .permission-card p {
+  color: #91a8c5;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+#permissions .permission-card button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #168cff, #00bde8);
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#permissions .permission-card button:active {
+  transform: scale(0.98);
+}
+
+#permissionStatus {
+  margin-top: 18px;
+  padding: 14px;
+  border-radius: 12px;
+  background: rgba(0, 217, 255, 0.08);
+  color: #00d9ff;
+  font-size: 13px;
+}
