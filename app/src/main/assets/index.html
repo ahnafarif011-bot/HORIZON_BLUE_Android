@@ -19,7 +19,7 @@
       <small>Explore • Secure • Control</small>
     </div>
   </div>
-  <span class="version">v4.0</span>
+  <span class="version">v4.1</span>
 </header>
 
 <div class="layout">
@@ -63,7 +63,7 @@
     <div class="stat"><span>Application</span><b>HORIZON BLUE</b></div>
     <div class="stat"><span>Edition</span><b>Personal Security PRO</b></div>
     <div class="stat"><span>Network</span><b id="online">Checking...</b></div>
-    <div class="stat"><span>Version</span><b>4.0</b></div>
+    <div class="stat"><span>Version</span><b>4.1</b></div>
   </div>
 
   <h2>Security Modules</h2>
@@ -74,7 +74,7 @@
     <button data-go="secure-vault"><strong>🔒</strong><b>Secure Vault</b><small>Private secure storage</small></button>
     <button data-go="network"><strong>🌐</strong><b>Network Lab</b><small>Connection information</small></button>
     <button data-go="security"><strong>🛡</strong><b>Security Center</b><small>Security checklist</small></button>
-    <button data-go="location"><strong>📍</strong><b>Location Center</b><small>Own device location</small></button>
+    <button data-go="location"><strong>📍</strong><b>Location Center</b><small>Consent-based location sharing</small></button>
     <button data-go="device"><strong>▣</strong><b>Device Monitor</b><small>Device information</small></button>
     <button data-go="link-analyzer"><strong>🔗</strong><b>Link Analyzer</b><small>URL safety analysis</small></button>
     <button data-go="number-intelligence"><strong>📱</strong><b>Number Intelligence</b><small>Number format checker</small></button>
@@ -216,13 +216,13 @@
     <h3>Private Security Storage</h3>
     <p class="muted">নিজের ব্যক্তিগত নোট নিরাপদে রাখার জন্য Vault।</p>
 
-    <label for="vaultPin">Vault PIN</label>
+    <label for="vaultPin">Vault PIN / Password</label>
     <input
       id="vaultPin"
       type="password"
-      inputmode="numeric"
-      maxlength="8"
-      placeholder="Enter 6-8 digit PIN"
+      inputmode="text"
+      maxlength="128"
+      placeholder="Enter at least 8 characters"
       autocomplete="off">
 
     <button id="vaultUnlock">Unlock Vault</button>
@@ -246,9 +246,7 @@
   </div>
 
   <p class="muted">
-    Vault-এর প্রকৃত encryption, PIN verification এবং নিরাপদ storage
-    JavaScript ও Android স্তরে পরবর্তী ধাপে যুক্ত করা হবে।
-    এই সংস্করণে গোপন তথ্য সংরক্ষণ কোরো না।
+    ব্যক্তিগত তথ্য রাখার আগে encryption ও Android storage সুরক্ষা পরীক্ষা করে নাও।
   </p>
 </section>
 
@@ -285,11 +283,12 @@
 
 <!-- LOCATION CENTER -->
 <section class="page" id="location">
-  <h2>Location Center</h2>
+  <h2>📍 Location Center</h2>
 
   <div class="panel">
     <h3>📍 My Device Location</h3>
-    <p class="muted">নিজের ডিভাইসের লোকেশন দেখতে অনুমতি দাও।</p>
+    <p class="muted">নিজের ফোনের বর্তমান লোকেশন দেখতে অনুমতি দাও।</p>
+
     <button id="locate">Get My Location</button>
 
     <div class="stat">
@@ -301,16 +300,87 @@
   </div>
 
   <div class="panel">
-    <h3>🔵 Live Location Sharing</h3>
-    <div class="stat"><span>Maximum Duration</span><b>7 Days</b></div>
-    <div class="stat"><span>Consent</span><b>Required</b></div>
+    <h3>🔵 Share My Live Location</h3>
+
+    <div class="stat">
+      <span>Maximum Duration</span>
+      <b>7 Days</b>
+    </div>
+
     <p class="muted">
-      নিজের লোকেশন শেয়ার করার ব্যবস্থা। ব্যবহারকারী যেকোনো সময়
-      শেয়ার বন্ধ করতে পারবেন।
+      নিজের সম্মতিতে অন্য ব্যক্তির সঙ্গে লাইভ লোকেশন শেয়ার করো।
+      যেকোনো সময় শেয়ার বন্ধ করতে পারবে।
     </p>
+
+    <label for="shareDuration">Sharing Duration</label>
+    <select id="shareDuration">
+      <option value="1">1 Hour</option>
+      <option value="6">6 Hours</option>
+      <option value="24">24 Hours</option>
+      <option value="72">3 Days</option>
+      <option value="168">7 Days</option>
+    </select>
+
+    <label class="checkrow">
+      <input type="checkbox" id="shareConsent">
+      আমি বুঝেছি এবং স্বেচ্ছায় নিজের লাইভ লোকেশন শেয়ার করতে সম্মতি দিচ্ছি।
+    </label>
+
+    <button id="startSharing">Start Location Sharing</button>
+    <button id="stopSharing" class="secondary">Stop Sharing</button>
+
+    <div class="result">
+      <h3>Sharing Status</h3>
+      <p id="sharingStatus">Not sharing.</p>
+
+      <p>Share Code:</p>
+      <code id="shareCode">Not generated</code>
+
+      <p id="sharingExpiry" class="muted">No active sharing session.</p>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>👥 View Shared Location</h3>
+
     <p class="muted">
-      Live sharing এখনো সার্ভারের সঙ্গে সংযুক্ত হয়নি।
-      অন্য ব্যক্তির লোকেশন তাঁর স্পষ্ট সম্মতি ছাড়া পাওয়া যাবে না।
+      অন্য ব্যক্তি স্বেচ্ছায় তৈরি করে দেওয়া Share Code এখানে লিখুন।
+    </p>
+
+    <label for="receiveShareCode">Enter Share Code</label>
+    <input
+      id="receiveShareCode"
+      type="text"
+      placeholder="Enter sharing code"
+      maxlength="20"
+      autocomplete="off">
+
+    <button id="viewSharedLocation">Connect & View Location</button>
+
+    <div class="result">
+      <p id="receiverStatus">No sharing session connected.</p>
+      <p id="sharedLocationResult">
+        Shared location will appear here after secure connection.
+      </p>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>🛡 Sharing Safety</h3>
+
+    <div class="stat"><span>Consent</span><b>Mandatory</b></div>
+    <div class="stat"><span>Maximum Duration</span><b>7 Days</b></div>
+    <div class="stat"><span>Stop Sharing</span><b>Available Anytime</b></div>
+    <div class="stat"><span>Unauthorized Tracking</span><b>Not Allowed</b></div>
+
+    <p class="muted">
+      কোনো ব্যক্তির অনুমতি ছাড়া তাঁর লোকেশন দেখা যাবে না।
+      শেয়ারকারী যেকোনো সময় অনুমতি প্রত্যাহার করতে পারবেন।
+    </p>
+
+    <p class="muted">
+      Live sharing server connection এখনো configure করা হয়নি।
+      Share Code ও location exchange চালু করতে secure backend প্রয়োজন।
     </p>
   </div>
 </section>
@@ -403,7 +473,7 @@
 
   <div class="terminal">
     <div id="termout">
-      HORIZON BLUE SAFE CONSOLE v4.0
+      HORIZON BLUE SAFE CONSOLE v4.1
       Type help to see commands.
     </div>
 
@@ -446,7 +516,7 @@
   </div>
 </section>
 
-<footer>HORIZON BLUE · Android Edition · v4.0</footer>
+<footer>HORIZON BLUE · Android Edition · v4.1</footer>
 
 </main>
 </div>
@@ -454,4 +524,4 @@
 <script src="app.js"></script>
 
 </body>
-                                             </html>
+                             </html>
