@@ -1,30 +1,62 @@
 'use strict';
 
+/* =====================================
+   HORIZON BLUE - CORE APP
+   Version 3.0
+   ===================================== */
+
 const $ = id => document.getElementById(id);
 
-// Navigation
+const setText = (id, value) => {
+  const el = $(id);
+  if (el) el.textContent = value;
+};
+
+const on = (id, event, callback) => {
+  const el = $(id);
+  if (el) el.addEventListener(event, callback);
+};
+
+/* =====================================
+   1. NAVIGATION
+   ===================================== */
+
 function page(name) {
-  document.querySelectorAll('.page').forEach(p =>
-    p.classList.toggle('show', p.id === name)
-  );
-  document.querySelectorAll('.navbtn').forEach(b =>
-    b.classList.toggle('active', b.dataset.page === name)
-  );
+  document.querySelectorAll('.page').forEach(p => {
+    p.classList.toggle('show', p.id === name);
+  });
+
+  document.querySelectorAll('.navbtn').forEach(b => {
+    b.classList.toggle('active', b.dataset.page === name);
+  });
+
+  if (name === 'permissions') {
+    getPermissionStatus();
+  }
+
   window.scrollTo(0, 0);
 }
 
-document.querySelectorAll('[data-page]').forEach(b =>
-  b.addEventListener('click', () => page(b.dataset.page))
-);
+document.querySelectorAll('[data-page]').forEach(b => {
+  b.addEventListener('click', () => page(b.dataset.page));
+});
 
-document.querySelectorAll('[data-go]').forEach(b =>
-  b.addEventListener('click', () => page(b.dataset.go))
-);
+document.querySelectorAll('[data-go]').forEach(b => {
+  b.addEventListener('click', () => page(b.dataset.go));
+});
 
-// Cryptographically secure unbiased random number
+/* =====================================
+   2. SECURE RANDOM GENERATOR
+   ===================================== */
+
 function secureIndex(max) {
-  if (!Number.isSafeInteger(max) || max < 1 || max > 4294967296) {
+  if (!Number.isSafeInteger(max) || max < 1 ||
+      max > 4294967296) {
     throw new Error('Invalid random range');
+  }
+
+  if (!window.crypto?.getRandomValues) {
+    throw new Error('Secure random unavailable');
   }
 
   const limit = Math.floor(4294967296 / max) * max;
@@ -44,15 +76,19 @@ function shuffle(array) {
     const j = secureIndex(i + 1);
     [array[i], array[j]] = [array[j], array[i]];
   }
+
   return array;
 }
 
-// Password generator
+/* =====================================
+   3. PASSWORD LAB
+   ===================================== */
+
 let currentPassword = '';
 let passwordVisible = false;
 
-$('length').addEventListener('input', e => {
-  $('lenval').textContent = e.target.value;
+on('length', 'input', e => {
+  setText('lenval', e.target.value);
 });
 
 function updateStrength(password) {
@@ -66,86 +102,94 @@ function updateStrength(password) {
   if (/[^A-Za-z0-9]/.test(password)) score++;
 
   const percent = Math.round(score / 6 * 100);
-  $('strengthBar').style.width = percent + '%';
+  const bar = $('strengthBar');
+
+  if (bar) bar.style.width = percent + '%';
 
   const label = score <= 2 ? 'Weak' :
                 score <= 4 ? 'Medium' : 'Strong';
 
-  $('strengthText').textContent =
-    'Strength: ' + label + ' · ' + percent + '%';
+  setText('strengthText',
+    'Strength: ' + label + ' · ' + percent + '%');
 }
 
 function generatePassword() {
-  if (!window.crypto?.getRandomValues) {
-    $('passMsg').textContent =
-      'Secure random generator unavailable.';
-    return;
+  try {
+    const groups = [];
+
+    if ($('upper')?.checked)
+      groups.push('ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+
+    if ($('lower')?.checked)
+      groups.push('abcdefghijklmnopqrstuvwxyz');
+
+    if ($('nums')?.checked)
+      groups.push('0123456789');
+
+    if ($('symbols')?.checked)
+      groups.push('!@#$%^&*()-_=+[]{}?');
+
+    if (!groups.length) {
+      setText('passMsg', 'Select a character type.');
+      return;
+    }
+
+    const length = Number($('length')?.value || 16);
+
+    if (length < groups.length || length > 64) {
+      setText('passMsg', 'Choose a valid length (4–64).');
+      return;
+    }
+
+    const pool = groups.join('');
+    const chars = groups.map(group =>
+      group[secureIndex(group.length)]
+    );
+
+    while (chars.length < length) {
+      chars.push(pool[secureIndex(pool.length)]);
+    }
+
+    currentPassword = shuffle(chars).join('');
+    passwordVisible = false;
+
+    setText('passwordOut', '•'.repeat(length));
+    setText('togglePass', 'Show');
+
+    updateStrength(currentPassword);
+
+    setText('passMsg',
+      'Generated locally. Not uploaded or saved.');
+  } catch (error) {
+    setText('passMsg', error.message);
   }
-
-  const groups = [];
-
-  if ($('upper').checked) groups.push('ABCDEFGHIJKLMNOPQRSTUVWXYZ');
-  if ($('lower').checked) groups.push('abcdefghijklmnopqrstuvwxyz');
-  if ($('nums').checked) groups.push('0123456789');
-  if ($('symbols').checked) groups.push('!@#$%^&*()-_=+[]{}?');
-
-  if (!groups.length) {
-    $('passMsg').textContent =
-      'Select at least one character type.';
-    return;
-  }
-
-  const length = Number($('length').value);
-
-  if (length < groups.length) {
-    $('passMsg').textContent =
-      'Password length is too short for selected types.';
-    return;
-  }
-
-  const pool = groups.join('');
-  const chars = groups.map(group =>
-    group[secureIndex(group.length)]
-  );
-
-  while (chars.length < length) {
-    chars.push(pool[secureIndex(pool.length)]);
-  }
-
-  currentPassword = shuffle(chars).join('');
-  passwordVisible = false;
-
-  $('passwordOut').textContent = '•'.repeat(length);
-  $('togglePass').textContent = 'Show';
-
-  updateStrength(currentPassword);
-  $('passMsg').textContent =
-    'Password generated locally. It is not saved or uploaded.';
 }
 
-$('generate').addEventListener('click', generatePassword);
+on('generate', 'click', generatePassword);
 
-$('togglePass').addEventListener('click', () => {
+on('togglePass', 'click', () => {
   if (!currentPassword) return;
 
   passwordVisible = !passwordVisible;
 
-  $('passwordOut').textContent =
-    passwordVisible ? currentPassword : '•'.repeat(currentPassword.length);
+  setText('passwordOut',
+    passwordVisible ? currentPassword :
+    '•'.repeat(currentPassword.length));
 
-  $('togglePass').textContent =
-    passwordVisible ? 'Hide' : 'Show';
+  setText('togglePass',
+    passwordVisible ? 'Hide' : 'Show');
 });
 
-// Clipboard
+/* =====================================
+   4. CLIPBOARD
+   ===================================== */
+
 async function copyText(text) {
-  if (!text || text === '—' || text === 'Password here') return;
+  if (!text || !navigator.clipboard?.writeText) {
+    return false;
+  }
 
   try {
-    if (!navigator.clipboard?.writeText) {
-      throw new Error('Clipboard unavailable');
-    }
-
     await navigator.clipboard.writeText(text);
     return true;
   } catch {
@@ -153,149 +197,195 @@ async function copyText(text) {
   }
 }
 
-$('copyPass').addEventListener('click', async () => {
+on('copyPass', 'click', async () => {
   if (!currentPassword) {
-    $('passMsg').textContent = 'Generate a password first.';
+    setText('passMsg', 'Generate a password first.');
     return;
   }
 
   const ok = await copyText(currentPassword);
-  $('passMsg').textContent = ok
-    ? 'Password copied.'
-    : 'Copy unavailable. Select and copy manually.';
+
+  setText('passMsg', ok ?
+    'Password copied.' :
+    'Clipboard unavailable. Copy manually.');
 });
 
-$('copyPhrase').addEventListener('click', async () => {
-  const phrase = $('phraseOut').dataset.value || '';
+on('copyPhrase', 'click', async () => {
+  const phrase = $('phraseOut')?.dataset.value || '';
   const ok = await copyText(phrase);
-  $('passMsg').textContent = ok
-    ? 'Passphrase copied.'
-    : 'Copy unavailable.';
+
+  setText('passMsg', ok ?
+    'Passphrase copied.' :
+    'Clipboard unavailable.');
 });
 
-// Passphrase helper
-$('makePhrase').addEventListener('click', () => {
-  const words = $('clue').value
-    .split(/[,\s]+/)
-    .map(w => w.trim())
-    .filter(Boolean)
-    .slice(0, 3);
+/* =====================================
+   5. PASSPHRASE GENERATOR
+   ===================================== */
 
-  if (!words.length) {
-    $('phraseOut').textContent = 'Enter some words first.';
-    return;
+on('makePhrase', 'click', () => {
+  try {
+    const words = ($('clue')?.value || '')
+      .split(/[,\s]+/)
+      .map(w => w.trim())
+      .filter(Boolean)
+      .slice(0, 3);
+
+    if (!words.length) {
+      setText('phraseOut', 'Enter some words first.');
+      return;
+    }
+
+    const extras = [
+      'Orbit', 'Nova', 'River', 'Sky',
+      'Forest', 'Silver', 'Cloud',
+      'Ocean', 'Comet', 'Amber'
+    ];
+
+    const extra = extras[secureIndex(extras.length)];
+    const number = 10000 + secureIndex(90000);
+
+    const phrase =
+      [...words, extra, String(number)].join('-');
+
+    const output = $('phraseOut');
+
+    if (output) {
+      output.textContent = phrase;
+      output.dataset.value = phrase;
+    }
+  } catch (error) {
+    setText('phraseOut', error.message);
   }
-
-  const extras = ['Orbit', 'Nova', 'River', 'Sky', 'Forest',
-                  'Silver', 'Cloud', 'Ocean', 'Comet', 'Amber'];
-
-  const extra = extras[secureIndex(extras.length)];
-  const number = 10000 + secureIndex(90000);
-
-  const phrase = [...words, extra, String(number)].join('-');
-
-  $('phraseOut').textContent = phrase;
-  $('phraseOut').dataset.value = phrase;
 });
 
-// Network monitor
+/* =====================================
+   6. NETWORK MONITOR
+   ===================================== */
+
 function net() {
-  $('online').textContent =
-    navigator.onLine ? 'Online' : 'Offline';
+  setText('online',
+    navigator.onLine ? 'Online' : 'Offline');
 
-  $('connection').textContent =
-    navigator.connection?.effectiveType || 'Not exposed';
+  setText('connection',
+    navigator.connection?.effectiveType || 'Not exposed');
 
-  $('lang').textContent = navigator.language || '—';
+  setText('lang',
+    navigator.language || '—');
 
-  $('platform').textContent =
+  setText('platform',
     navigator.userAgentData?.platform ||
-    navigator.platform || 'Not exposed';
+    navigator.platform || 'Not exposed');
 }
 
-$('refreshNet').addEventListener('click', net);
+on('refreshNet', 'click', net);
+
 window.addEventListener('online', net);
 window.addEventListener('offline', net);
+
 net();
 
-// Device monitor
+/* =====================================
+   7. DEVICE MONITOR
+   ===================================== */
+
 async function device() {
-  $('screen').textContent =
+  setText('screen',
     screen.width + ' × ' + screen.height +
-    ' · ' + devicePixelRatio + 'x';
+    ' · ' + devicePixelRatio + 'x');
 
-  $('browser').textContent =
-    navigator.userAgentData?.brands?.map(x => x.brand).join(', ') ||
-    'Browser info limited';
+  setText('browser',
+    navigator.userAgentData?.brands
+      ?.map(x => x.brand).join(', ') ||
+    'Browser info limited');
 
-  $('cores').textContent =
-    navigator.hardwareConcurrency || 'Not exposed';
+  setText('cores',
+    navigator.hardwareConcurrency || 'Not exposed');
 
-  $('memory').textContent =
+  setText('memory',
     navigator.deviceMemory
       ? navigator.deviceMemory + ' GB (approx.)'
-      : 'Not exposed';
+      : 'Not exposed');
 
-  $('battery').textContent = 'Checking...';
+  setText('battery', 'Checking...');
 
   try {
-    if (navigator.getBattery) {
-      const battery = await navigator.getBattery();
-
-      $('battery').textContent =
-        Math.round(battery.level * 100) + '%' +
-        (battery.charging ? ' · Charging' : '');
-
-      battery.addEventListener('levelchange', device);
-      battery.addEventListener('chargingchange', device);
-    } else {
-      $('battery').textContent = 'Not exposed';
+    if (!navigator.getBattery) {
+      setText('battery', 'Not exposed');
+      return;
     }
+
+    const battery = await navigator.getBattery();
+
+    setText('battery',
+      Math.round(battery.level * 100) + '%' +
+      (battery.charging ? ' · Charging' : ''));
+
   } catch {
-    $('battery').textContent = 'Unavailable';
+    setText('battery', 'Unavailable');
   }
 }
 
-$('refreshDevice').addEventListener('click', device);
+on('refreshDevice', 'click', device);
 device();
 
-// Security checklist
-function updateSecurity() {
-  const checks = [...document.querySelectorAll('.securityCheck')];
-  const done = checks.filter(c => c.checked).length;
-  const percent = Math.round(done / checks.length * 100);
+/* =====================================
+   8. SECURITY CHECKLIST
+   ===================================== */
 
-  $('securityCount').textContent = done + ' / ' + checks.length;
-  $('securityBar').style.width = percent + '%';
-  $('securityPercent').textContent = percent + '% completed';
+function updateSecurity() {
+  const checks = [
+    ...document.querySelectorAll('.securityCheck')
+  ];
+
+  const done = checks.filter(c => c.checked).length;
+
+  const percent = checks.length
+    ? Math.round(done / checks.length * 100)
+    : 0;
+
+  setText('securityCount',
+    done + ' / ' + checks.length);
+
+  const bar = $('securityBar');
+  if (bar) bar.style.width = percent + '%';
+
+  setText('securityPercent',
+    percent + '% completed');
 }
 
-document.querySelectorAll('.securityCheck').forEach(c =>
-  c.addEventListener('change', updateSecurity)
-);
+document.querySelectorAll('.securityCheck').forEach(c => {
+  c.addEventListener('change', updateSecurity);
+});
+
 updateSecurity();
 
-// Own device location
-$('locate').addEventListener('click', () => {
+/* =====================================
+   9. OWN DEVICE LOCATION
+   ===================================== */
+
+on('locate', 'click', () => {
   if (!navigator.geolocation) {
-    $('locout').textContent = 'Geolocation unavailable.';
+    setText('locout', 'Location unavailable.');
     return;
   }
 
-  $('locout').textContent = 'Waiting for permission...';
+  setText('locout', 'Waiting for your permission...');
 
   navigator.geolocation.getCurrentPosition(
-    p => {
-      const lat = p.coords.latitude.toFixed(5);
-      const lon = p.coords.longitude.toFixed(5);
+    position => {
+      const lat = position.coords.latitude.toFixed(5);
+      const lon = position.coords.longitude.toFixed(5);
 
-      $('locout').textContent =
+      setText('locout',
         'Latitude: ' + lat +
         ' · Longitude: ' + lon +
-        ' · Accuracy: ' + Math.round(p.coords.accuracy) + ' m';
+        ' · Accuracy: ' +
+        Math.round(position.coords.accuracy) + ' m');
     },
-    e => {
-      $('locout').textContent = 'Location unavailable: ' + e.message;
+    error => {
+      setText('locout',
+        'Location unavailable: ' + error.message);
     },
     {
       enableHighAccuracy: true,
@@ -305,18 +395,24 @@ $('locate').addEventListener('click', () => {
   );
 });
 
-// Safe demo terminal
+/* =====================================
+   10. SAFE DEMO TERMINAL
+   ===================================== */
+
 const help =
-  'Available safe commands: help, status, date, tools, clear';
+  'Commands: help, status, date, tools, clear';
 
 function run() {
-  const command = $('command').value.trim().toLowerCase();
+  const command =
+    ($('command')?.value || '').trim().toLowerCase();
+
   let output = '';
 
   if (command === 'help') {
     output = help;
   } else if (command === 'status') {
-    output = 'HORIZON BLUE PRO: Running\nNetwork: ' +
+    output =
+      'HORIZON BLUE: Running\nNetwork: ' +
       (navigator.onLine ? 'Online' : 'Offline');
   } else if (command === 'date') {
     output = new Date().toString();
@@ -324,245 +420,245 @@ function run() {
     output =
       'Password | Fingerprint | Network | Security | Location | Device';
   } else if (command === 'clear') {
-    $('termout').textContent = 'Console cleared.';
+    setText('termout', 'Console cleared.');
   } else if (command) {
     output = 'Unknown command. Type help.';
   }
 
   if (command && command !== 'clear') {
-    $('termout').textContent += '\n\n' + output;
+    const box = $('termout');
+
+    if (box) {
+      box.textContent += '\n\n' + output;
+    }
   }
 
-  $('command').value = '';
+  if ($('command')) $('command').value = '';
 }
 
-$('run').addEventListener('click', run);
+on('run', 'click', run);
 
-$('command').addEventListener('keydown', e => {
+on('command', 'keydown', e => {
   if (e.key === 'Enter') run();
 });
 
-// Android biometric bridge
-const fpButton = $('fingerprintAuth');
-const fpStatus = $('fingerprintStatus');
+/* =====================================
+   11. ANDROID BIOMETRIC BRIDGE
+   ===================================== */
 
-fpButton.addEventListener('click', () => {
-  fpStatus.textContent = 'Preparing biometric authentication...';
+on('fingerprintAuth', 'click', () => {
+  setText('fingerprintStatus',
+    'Preparing biometric authentication...');
 
   if (window.HorizonBiometric &&
       typeof window.HorizonBiometric.authenticate === 'function') {
     window.HorizonBiometric.authenticate();
   } else {
-    fpStatus.textContent =
-      'Android biometric connection is not available.';
+    setText('fingerprintStatus',
+      'Android biometric connection unavailable.');
   }
 });
 
 window.onBiometricResult = function(success, message) {
-  fpStatus.textContent = success
-    ? '✓ Authentication successful'
-    : 'Authentication failed: ' + String(message || 'Unknown error');
+  setText('fingerprintStatus',
+    success
+      ? '✓ Authentication successful'
+      : 'Authentication failed: ' +
+        String(message || 'Unknown error'));
 };
 
-// Safe service worker registration
+/* =====================================
+   12. SERVICE WORKER
+   ===================================== */
+
 if ('serviceWorker' in navigator &&
     location.protocol.startsWith('http')) {
-  navigator.serviceWorker.register('./sw.js').catch(() => {});
-  }
+  navigator.serviceWorker
+    .register('./sw.js')
+    .catch(() => {});
+}
 
-/* HORIZON BLUE - License Center UI v2.1 */
+/* =====================================
+   13. LICENSE CENTER
+   ===================================== */
 
 (() => {
-  const $ = id => document.getElementById(id);
-
-  const keyInput = $("licenseKey");
-  const activateBtn = $("activateLicense");
-  const message = $("licenseMessage");
+  const keyInput = $('licenseKey');
+  const activateBtn = $('activateLicense');
+  const message = $('licenseMessage');
 
   if (!keyInput || !activateBtn || !message) return;
 
-  function showLicenseMessage(text, color) {
+  function showMessage(text, color) {
     message.textContent = text;
     message.style.color = color;
   }
 
-  function updateLicenseUI() {
-    $("licenseEdition").textContent = "Free Edition";
-    $("licenseStatus").textContent = "Not Activated";
-    $("licenseExpiry").textContent = "—";
-  }
+  setText('licenseEdition', 'Free Edition');
+  setText('licenseStatus', 'Not Activated');
+  setText('licenseExpiry', '—');
 
-  activateBtn.addEventListener("click", async () => {
+  activateBtn.addEventListener('click', () => {
     const key = keyInput.value.trim();
 
     if (!key) {
-      showLicenseMessage("Please enter your activation key.", "#ff7070");
-      return;
-    }
-
-    if (!/^HB-PRO-[A-Z0-9]{4}-[A-Z0-9]{4}$/i.test(key)) {
-      showLicenseMessage(
-        "Invalid key format. Example: HB-PRO-1234-ABCD",
-        "#ff7070"
+      showMessage(
+        'Please enter your activation key.',
+        '#ff7070'
       );
       return;
     }
 
-    showLicenseMessage(
-      "License server is not connected yet. Verification is unavailable.",
-      "#ffc66d"
+    if (!/^HB-PRO-[A-Z0-9]{4}-[A-Z0-9]{4}$/i.test(key)) {
+      showMessage(
+        'Invalid key format.',
+        '#ff7070'
+      );
+      return;
+    }
+
+    showMessage(
+      'License server is not connected yet.',
+      '#ffc66d'
     );
   });
-
-  updateLicenseUI();
 })();
-/* HORIZON BLUE - Permission Request Manager */
+
+/* =====================================
+   14. PERMISSION REQUEST DEMO
+   Local demo only. No external access.
+   ===================================== */
 
 const ACCESS_TYPES = {
-  location: "Location",
-  messages: "Messages",
-  media: "Photos & Videos",
-  gmail: "Gmail",
-  facebook: "Facebook",
-  whatsapp: "WhatsApp",
-  imo: "IMO",
-  mobile: "Mobile Number",
-  x: "X Account"
+  location: 'Location',
+  messages: 'Messages',
+  media: 'Photos & Videos',
+  gmail: 'Gmail',
+  facebook: 'Facebook',
+  whatsapp: 'WhatsApp',
+  imo: 'IMO',
+  mobile: 'Mobile Number',
+  x: 'X Account'
 };
+
+const REQUEST_STORAGE = 'hb_permission_requests';
+
+function readRequests() {
+  try {
+    const data = JSON.parse(
+      localStorage.getItem(REQUEST_STORAGE) || '[]'
+    );
+
+    return Array.isArray(data) ? data : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveRequests(requests) {
+  localStorage.setItem(
+    REQUEST_STORAGE,
+    JSON.stringify(requests)
+  );
+}
 
 function requestAccess(type) {
   const service = ACCESS_TYPES[type];
 
   if (!service) {
-    alert("Invalid permission type.");
+    alert('Invalid request type.');
     return;
   }
 
   const confirmed = confirm(
     service +
-    " access request তৈরি করবেন?\n\n" +
-    "অন্য ব্যক্তির স্পষ্ট সম্মতি প্রয়োজন।"
+    ' permission demo request তৈরি করবেন?\n\n' +
+    'এটি শুধু এই ডিভাইসে সংরক্ষিত হবে। ' +
+    'অন্য ব্যক্তির সম্মতি ছাড়া কোনো তথ্য পাওয়া যাবে না।'
   );
 
   if (!confirmed) return;
 
+  const requests = readRequests();
+
   const request = {
-    id: crypto.randomUUID(),
+    id: Date.now().toString() +
+        '-' + Math.floor(Math.random() * 100000),
     type,
     service,
-    status: "PENDING",
+    status: 'PENDING',
     createdAt: Date.now(),
-    expiresAt: Date.now() + (7 * 24 * 60 * 60 * 1000)
+    expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000
   };
 
-  const requests = JSON.parse(
-    localStorage.getItem("hb_permission_requests") || "[]"
-  );
-
   requests.push(request);
+  saveRequests(requests);
 
-  localStorage.setItem(
-    "hb_permission_requests",
-    JSON.stringify(requests)
-  );
-
-  const status = document.getElementById("permissionStatus");
-
-  if (status) {
-    status.textContent =
-      service + " request created. Recipient consent is required.";
-  }
+  getPermissionStatus();
 
   alert(
-    service +
-    " request তৈরি হয়েছে।\n\n" +
-    "Status: Pending\n" +
-    "Maximum duration: 7 days\n" +
-    "এটি এখনো অন্য ব্যক্তির কাছে পাঠানো হয়নি।"
+    service + ' demo request created.\n\n' +
+    'Status: PENDING\n' +
+    'Storage: This device only\n' +
+    'No access has been granted.'
   );
 }
-/* HORIZON BLUE - Access Status Manager */
+
+/* =====================================
+   15. PERMISSION STATUS MANAGER
+   ===================================== */
 
 function getPermissionStatus() {
-  const requests = JSON.parse(
-    localStorage.getItem("hb_permission_requests") || "[]"
-  );
-
+  const requests = readRequests();
   const now = Date.now();
 
   const updated = requests.map(item => {
-    if (
-      item.status === "APPROVED" &&
-      now >= item.expiresAt
-    ) {
-      return { ...item, status: "EXPIRED" };
+    if (now >= item.expiresAt &&
+        item.status !== 'EXPIRED') {
+      return { ...item, status: 'EXPIRED' };
     }
 
     return item;
   });
 
-  localStorage.setItem(
-    "hb_permission_requests",
-    JSON.stringify(updated)
-  );
+  saveRequests(updated);
 
-  const box = document.getElementById("permissionStatus");
-
+  const box = $('permissionStatus');
   if (!box) return;
 
+  box.replaceChildren();
+
   if (!updated.length) {
-    box.textContent = "No permission requests yet.";
+    box.textContent = 'No permission requests yet.';
     return;
   }
 
-  box.innerHTML = updated.map(item => `
-    <div class="permission-card">
-      <strong>${item.service}</strong>
-      <p>Status: ${item.status}</p>
-      <p>Maximum duration: 7 days</p>
-    </div>
-  `).join("");
+  updated.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'permission-card';
+
+    const title = document.createElement('strong');
+    title.textContent = item.service;
+
+    const status = document.createElement('p');
+    status.textContent = 'Status: ' + item.status;
+
+    const duration = document.createElement('p');
+    duration.textContent = 'Demo limit: 7 days';
+
+    card.append(title, status, duration);
+    box.appendChild(card);
+  });
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+/* =====================================
+   16. APP INITIALIZATION
+   ===================================== */
+
+document.addEventListener('DOMContentLoaded', () => {
   getPermissionStatus();
+  net();
+  updateSecurity();
 });
-/* HORIZON BLUE - Access Status Manager */
 
-function getPermissionStatus() {
-  const requests = JSON.parse(
-    localStorage.getItem("hb_permission_requests") || "[]"
-  );
-
-  const now = Date.now();
-
-  const updated = requests.map(item => {
-    if (item.status === "APPROVED" && now >= item.expiresAt) {
-      return { ...item, status: "EXPIRED" };
-    }
-    return item;
-  });
-
-  localStorage.setItem(
-    "hb_permission_requests",
-    JSON.stringify(updated)
-  );
-
-  const box = document.getElementById("permissionStatus");
-  if (!box) return;
-
-  if (!updated.length) {
-    box.textContent = "No permission requests yet.";
-    return;
-  }
-
-  box.innerHTML = updated.map(item => `
-    <div class="permission-card">
-      <strong>${item.service}</strong>
-      <p>Status: ${item.status}</p>
-      <p>Maximum duration: 7 days</p>
-    </div>
-  `).join("");
-}
-
-document.addEventListener("DOMContentLoaded", getPermissionStatus);
+console.log('HORIZON BLUE v3.0 initialized.');
