@@ -8,6 +8,7 @@
 <title>HORIZON BLUE PRO</title>
 <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
 <header class="top">
@@ -18,69 +19,218 @@
       <small>Explore • Secure • Control</small>
     </div>
   </div>
-  <span class="version">v2.1</span>
+  <span class="version">v3.0</span>
 </header>
 
 <div class="layout">
+
 <nav class="nav" id="nav">
-  <button class="navbtn" data-page="permissions">
-  🔐 Permission Manager
-  </button>
   <button class="navbtn active" data-page="home">⌂ Home</button>
-  <button class="navbtn" data-page="password">🔐 Password</button>
+  <button class="navbtn" data-page="permissions">🔐 Permission Manager</button>
+  <button class="navbtn" data-page="password">🔑 Password Lab</button>
   <button class="navbtn" data-page="fingerprint">👆 Fingerprint</button>
-  <button class="navbtn" data-page="network">🌐 Network</button>
-  <button class="navbtn" data-page="security">🛡 Security</button>
-  <button class="navbtn" data-page="location">📍 Location</button>
-  <button class="navbtn" data-page="device">▣ Device</button>
-  <button class="navbtn" data-page="terminal">› Terminal</button>
+  <button class="navbtn" data-page="network">🌐 Network Lab</button>
+  <button class="navbtn" data-page="security">🛡 Security Center</button>
+  <button class="navbtn" data-page="location">📍 My Location</button>
+  <button class="navbtn" data-page="device">▣ Device Monitor</button>
+  <button class="navbtn" data-page="terminal">› Safe Terminal</button>
   <button class="navbtn" data-page="activation">⭐ Pro Activation</button>
 </nav>
 
 <main>
 
+<!-- HOME -->
 <section class="page show" id="home">
+
   <div class="hero">
     <div class="orb">HB</div>
     <p class="eyebrow">PREMIUM PERSONAL CYBER TOOLKIT</p>
     <h1>HORIZON <em>BLUE</em></h1>
     <p>Explore • Secure • Control</p>
+
     <div class="hero-actions">
-      <button data-go="password">Password Lab</button>
+      <button data-go="password">Open Password Lab</button>
       <button class="secondary" data-go="security">Security Check</button>
     </div>
   </div>
 
-  <div class="tiles">
-    <button data-go="password"><strong>🔑</strong><b>Password Lab</b><small>Secure password generator</small></button>
-    <button data-go="fingerprint"><strong>👆</strong><b>Fingerprint Lab</b><small>Biometric authentication</small></button>
-    <button data-go="network"><strong>🌐</strong><b>Network Lab</b><small>Connection information</small></button>
-    <button data-go="security"><strong>🛡</strong><b>Security Lab</b><small>Account protection</small></button>
-    <button data-go="location"><strong>📍</strong><b>Location</b><small>Own device location</small></button>
-    <button data-go="device"><strong>▣</strong><b>Device Monitor</b><small>Device information</small></button>
-    <button data-go="activation"><strong>⭐</strong><b>Pro Activation</b><small>Manage your license</small></button>
+  <div class="panel">
+    <h3>System Overview</h3>
+    <div class="stat">
+      <span>Application</span>
+      <b>HORIZON BLUE</b>
+    </div>
+    <div class="stat">
+      <span>Edition</span>
+      <b>Personal Security</b>
+    </div>
+    <div class="stat">
+      <span>Network</span>
+      <b id="online">Checking...</b>
+    </div>
+    <div class="stat">
+      <span>Version</span>
+      <b>3.0</b>
+    </div>
   </div>
-  <p class="note">HORIZON BLUE PRO · Personal Security Toolkit</p>
+
+  <h2>Security Modules</h2>
+
+  <div class="tiles">
+    <button data-go="password">
+      <strong>🔑</strong>
+      <b>Password Lab</b>
+      <small>Secure password generator</small>
+    </button>
+
+    <button data-go="fingerprint">
+      <strong>👆</strong>
+      <b>Fingerprint Lab</b>
+      <small>Biometric authentication</small>
+    </button>
+
+    <button data-go="network">
+      <strong>🌐</strong>
+      <b>Network Lab</b>
+      <small>Connection information</small>
+    </button>
+
+    <button data-go="security">
+      <strong>🛡</strong>
+      <b>Security Center</b>
+      <small>Account protection</small>
+    </button>
+
+    <button data-go="location">
+      <strong>📍</strong>
+      <b>My Location</b>
+      <small>Own device location</small>
+    </button>
+
+    <button data-go="device">
+      <strong>▣</strong>
+      <b>Device Monitor</b>
+      <small>Device information</small>
+    </button>
+
+    <button data-go="permissions">
+      <strong>🔐</strong>
+      <b>Permission Manager</b>
+      <small>Consent-based demo</small>
+    </button>
+
+    <button data-go="activation">
+      <strong>⭐</strong>
+      <b>Pro Activation</b>
+      <small>License management</small>
+    </button>
+  </div>
+
+  <p class="note">HORIZON BLUE · Personal Security Toolkit</p>
 </section>
 
+<!-- PERMISSION MANAGER -->
+<section class="page" id="permissions">
+
+  <h2>Permission Manager</h2>
+
+  <div class="panel">
+    <h3>Consent-Based Access Control</h3>
+    <p class="muted">
+      এই মডিউলটি ডেমো অনুরোধ তৈরি করে। বাস্তব তথ্যের অ্যাক্সেসের জন্য সংশ্লিষ্ট ব্যক্তির স্পষ্ট সম্মতি ও অফিসিয়াল অনুমোদন প্রয়োজন।
+    </p>
+
+    <div class="permission-card">
+      <h3>📍 Location Access</h3>
+      <p>নিজের সম্মতিতে লোকেশন শেয়ারিং।</p>
+      <button onclick="requestAccess('location')">Request Access</button>
+    </div>
+
+    <div class="permission-card">
+      <h3>💬 Messages</h3>
+      <p>সমর্থিত ও অনুমোদিত শেয়ারিং।</p>
+      <button onclick="requestAccess('messages')">Request Access</button>
+    </div>
+
+    <div class="permission-card">
+      <h3>🖼️ Photos & Videos</h3>
+      <p>ব্যবহারকারীর নির্বাচিত ফাইল।</p>
+      <button onclick="requestAccess('media')">Request Access</button>
+    </div>
+
+    <div class="permission-card">
+      <h3>📧 Gmail</h3>
+      <p>Google-এর অফিসিয়াল অনুমোদন।</p>
+      <button onclick="requestAccess('gmail')">Request Access</button>
+    </div>
+
+    <div class="permission-card">
+      <h3>Facebook</h3>
+      <p>সমর্থিত অফিসিয়াল অ্যাকাউন্ট অনুমোদন।</p>
+      <button onclick="requestAccess('facebook')">Request Access</button>
+    </div>
+
+    <div class="permission-card">
+      <h3>WhatsApp</h3>
+      <p>অফিসিয়াল শেয়ারিং ফিচার।</p>
+      <button onclick="requestAccess('whatsapp')">Request Access</button>
+    </div>
+
+    <div class="permission-card">
+      <h3>IMO</h3>
+      <p>অনুমোদিত শেয়ারিং ফিচার।</p>
+      <button onclick="requestAccess('imo')">Request Access</button>
+    </div>
+
+    <div class="permission-card">
+      <h3>Mobile Number</h3>
+      <p>মালিকের সম্মতিতে নম্বর যাচাই।</p>
+      <button onclick="requestAccess('mobile')">Request Access</button>
+    </div>
+
+    <div class="permission-card">
+      <h3>X Account</h3>
+      <p>অফিসিয়াল অনুমোদন।</p>
+      <button onclick="requestAccess('x')">Request Access</button>
+    </div>
+
+    <div class="permission-card">
+      <h3>Access Duration</h3>
+      <p>ডেমো মেয়াদ সর্বোচ্চ ৭ দিন।</p>
+      <strong>168 Hours</strong>
+    </div>
+
+    <div id="permissionStatus">
+      No access requests created yet.
+    </div>
+  </div>
+</section>
+
+<!-- PASSWORD LAB -->
 <section class="page" id="password">
   <h2>Password Lab <span class="pro">PRO</span></h2>
+
   <div class="panel">
     <h3>Secure Password Generator</h3>
+
     <label>Password Length: <b id="lenval">20</b></label>
     <input id="length" type="range" min="8" max="64" value="20">
+
     <div class="checks">
       <label><input type="checkbox" id="upper" checked> A-Z</label>
       <label><input type="checkbox" id="lower" checked> a-z</label>
       <label><input type="checkbox" id="nums" checked> 0-9</label>
       <label><input type="checkbox" id="symbols" checked> Symbols</label>
     </div>
+
     <button id="generate">Generate Password</button>
+
     <div class="result">
       <code id="passwordOut">Password here</code>
       <button id="togglePass" class="secondary">Show</button>
       <button id="copyPass" class="secondary">Copy</button>
     </div>
+
     <div class="meter"><span id="strengthBar"></span></div>
     <p id="strengthText" class="muted">Generate a password to check strength.</p>
     <p id="passMsg" class="muted">Generated locally on your device.</p>
@@ -90,16 +240,20 @@
     <h3>Passphrase Generator</h3>
     <input id="clue" placeholder="Enter words separated by commas">
     <button id="makePhrase">Create Passphrase</button>
+
     <div class="result">
       <code id="phraseOut">—</code>
       <button id="copyPhrase" class="secondary">Copy</button>
     </div>
-    <p class="muted">Use several unpredictable words. This tool does not save your input.</p>
+
+    <p class="muted">Use unpredictable words for better security.</p>
   </div>
 </section>
 
+<!-- FINGERPRINT -->
 <section class="page" id="fingerprint">
   <h2>Fingerprint Lab</h2>
+
   <div class="panel">
     <div class="orb">👆</div>
     <h3>Biometric Authentication</h3>
@@ -109,24 +263,34 @@
   </div>
 </section>
 
+<!-- NETWORK -->
 <section class="page" id="network">
   <h2>Network Lab</h2>
+
   <div class="panel">
     <div class="stat"><span>Online Status</span><b id="online">—</b></div>
     <div class="stat"><span>Connection</span><b id="connection">—</b></div>
     <div class="stat"><span>Language</span><b id="lang">—</b></div>
     <div class="stat"><span>Platform</span><b id="platform">—</b></div>
-    <button id="refreshNet" class="secondary">Refresh</button>
+    <button id="refreshNet" class="secondary">Refresh Network</button>
   </div>
 </section>
 
+<!-- SECURITY -->
 <section class="page" id="security">
   <h2>Security Center</h2>
+
   <div class="panel">
     <h3>Account Security Checklist</h3>
-    <div class="stat"><span>Completed</span><b id="securityCount">0 / 5</b></div>
+
+    <div class="stat">
+      <span>Completed</span>
+      <b id="securityCount">0 / 5</b>
+    </div>
+
     <div class="meter"><span id="securityBar"></span></div>
     <p id="securityPercent" class="muted">0% completed</p>
+
     <label class="checkrow"><input type="checkbox" class="securityCheck"> Unique Passwords</label>
     <label class="checkrow"><input type="checkbox" class="securityCheck"> Two Factor Authentication</label>
     <label class="checkrow"><input type="checkbox" class="securityCheck"> Updated Recovery Email</label>
@@ -135,8 +299,10 @@
   </div>
 </section>
 
+<!-- LOCATION -->
 <section class="page" id="location">
   <h2>Location Intelligence</h2>
+
   <div class="panel">
     <p>Get your own device location with permission.</p>
     <button id="locate">Get My Location</button>
@@ -144,63 +310,69 @@
   </div>
 </section>
 
+<!-- DEVICE -->
 <section class="page" id="device">
   <h2>Device Monitor</h2>
+
   <div class="panel">
     <div class="stat"><span>Screen</span><b id="screen">—</b></div>
     <div class="stat"><span>Browser</span><b id="browser">—</b></div>
     <div class="stat"><span>CPU Cores</span><b id="cores">—</b></div>
     <div class="stat"><span>Memory</span><b id="memory">—</b></div>
     <div class="stat"><span>Battery</span><b id="battery">—</b></div>
-    <button id="refreshDevice" class="secondary">Refresh</button>
+    <button id="refreshDevice" class="secondary">Refresh Device</button>
   </div>
 </section>
 
+<!-- TERMINAL -->
 <section class="page" id="terminal">
   <h2>NEXUS Terminal</h2>
+
   <div class="terminal">
-    <div id="termout">HORIZON BLUE SAFE CONSOLE v2.1
+    <div id="termout">HORIZON BLUE SAFE CONSOLE v3.0
 Type help to see commands.</div>
+
     <div class="termline">
       <span>horizon@blue:~$</span>
       <input id="command" autocomplete="off" placeholder="help">
       <button id="run">Run</button>
     </div>
   </div>
+
   <p class="muted">Safe demo console. Does not execute system commands.</p>
 </section>
 
+<!-- LICENSE -->
 <section class="page" id="activation">
   <h2>Pro Activation <span class="pro">PRO</span></h2>
 
   <div class="panel">
     <div class="orb">⭐</div>
     <h3>HORIZON BLUE License Center</h3>
-    <p>Activate your official Pro license to manage your subscription.</p>
+    <p>Manage your official Pro license.</p>
 
     <div class="stat">
       <span>Edition</span>
       <b id="licenseEdition">Free Edition</b>
     </div>
+
     <div class="stat">
       <span>License Status</span>
       <b id="licenseStatus">Not Activated</b>
     </div>
+
     <div class="stat">
       <span>Expiry Date</span>
       <b id="licenseExpiry">—</b>
     </div>
 
     <label for="licenseKey">Enter Activation Key</label>
-    <input
-      id="licenseKey"
-      type="text"
+    <input id="licenseKey" type="text"
       placeholder="HB-PRO-XXXX-XXXX"
-      autocomplete="off"
-      maxlength="40"
-    >
+      autocomplete="off" maxlength="40">
 
     <button id="activateLicense">Verify & Activate</button>
+
     <p id="licenseMessage" class="muted">
       Enter your official license key.
     </p>
@@ -212,87 +384,15 @@ Type help to see commands.</div>
     <div class="stat"><span>Biometric Authentication</span><b>Pro</b></div>
     <div class="stat"><span>Device Security Tools</span><b>Pro</b></div>
     <div class="stat"><span>Priority Updates</span><b>Pro</b></div>
-    <p class="muted">
-      License verification will be connected to a secure server in the next development step.
-    </p>
+    <p class="muted">License verification requires a connected secure server.</p>
   </div>
 </section>
 
-<footer>HORIZON BLUE · Android Edition · v2.1</footer>
+<footer>HORIZON BLUE · Android Edition · v3.0</footer>
+
 </main>
 </div>
 
 <script src="app.js"></script>
-  <!-- HORIZON BLUE PERMISSION MANAGER -->
-<section id="permissions" class="page">
-  <div class="panel">
-    <h2>Permission Manager</h2>
-    <p>Manage separate, consent-based access requests.</p>
-
-    <div class="permission-card">
-      <h3>📍 Location Access</h3>
-      <p>Share live location with explicit permission.</p>
-      <button onclick="requestAccess('location')">Request Access</button>
-    </div>
-
-    <div class="permission-card">
-      <h3>💬 Messages Access</h3>
-      <p>Only supported, authorized message access.</p>
-      <button onclick="requestAccess('messages')">Request Access</button>
-    </div>
-
-    <div class="permission-card">
-      <h3>🖼️ Photos & Videos</h3>
-      <p>Access only files explicitly selected and shared.</p>
-      <button onclick="requestAccess('media')">Request Access</button>
-    </div>
-
-    <div class="permission-card">
-      <h3>📧 Gmail</h3>
-      <p>Official Google authorization only.</p>
-      <button onclick="requestAccess('gmail')">Request Access</button>
-    </div>
-
-    <div class="permission-card">
-      <h3>Facebook</h3>
-      <p>Supported official account permissions only.</p>
-      <button onclick="requestAccess('facebook')">Request Access</button>
-    </div>
-
-    <div class="permission-card">
-      <h3>WhatsApp</h3>
-      <p>Official supported sharing and integrations only.</p>
-      <button onclick="requestAccess('whatsapp')">Request Access</button>
-    </div>
-
-    <div class="permission-card">
-      <h3>IMO</h3>
-      <p>Only authorized sharing features.</p>
-      <button onclick="requestAccess('imo')">Request Access</button>
-    </div>
-
-    <div class="permission-card">
-      <h3>Mobile Number</h3>
-      <p>Number verification with the owner's consent.</p>
-      <button onclick="requestAccess('mobile')">Request Access</button>
-    </div>
-
-    <div class="permission-card">
-      <h3>X Account</h3>
-      <p>Official account authorization only.</p>
-      <button onclick="requestAccess('x')">Request Access</button>
-    </div>
-
-    <div class="permission-card">
-      <h3>Access Duration</h3>
-      <p>Maximum permission period: 7 days.</p>
-      <strong>168 Hours</strong>
-    </div>
-
-    <div id="permissionStatus">
-      No access requests created yet.
-    </div>
-  </div>
-</section>
 </body>
-</html>
+                       </html>
