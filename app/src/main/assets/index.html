@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#061329">
-<meta name="description" content="HORIZON BLUE Premium Personal Security Toolkit">
+<meta name="description" content="HORIZON BLUE PRO Personal Security Toolkit">
 <title>HORIZON BLUE PRO</title>
 <link rel="stylesheet" href="style.css">
 </head>
@@ -19,7 +19,7 @@
       <small>Explore • Secure • Control</small>
     </div>
   </div>
-  <span class="version">v3.0</span>
+  <span class="version">v4.0</span>
 </header>
 
 <div class="layout">
@@ -29,6 +29,7 @@
   <button class="navbtn" data-page="permissions">🔐 Permission Manager</button>
   <button class="navbtn" data-page="password">🔑 Password Lab</button>
   <button class="navbtn" data-page="fingerprint">👆 Fingerprint</button>
+  <button class="navbtn" data-page="secure-vault">🔒 Secure Vault</button>
   <button class="navbtn" data-page="network">🌐 Network Lab</button>
   <button class="navbtn" data-page="security">🛡 Security Center</button>
   <button class="navbtn" data-page="location">📍 Location Center</button>
@@ -60,100 +61,54 @@
   <div class="panel">
     <h3>System Overview</h3>
     <div class="stat"><span>Application</span><b>HORIZON BLUE</b></div>
-    <div class="stat"><span>Edition</span><b>Personal Security</b></div>
+    <div class="stat"><span>Edition</span><b>Personal Security PRO</b></div>
     <div class="stat"><span>Network</span><b id="online">Checking...</b></div>
-    <div class="stat"><span>Version</span><b>3.0</b></div>
+    <div class="stat"><span>Version</span><b>4.0</b></div>
   </div>
 
   <h2>Security Modules</h2>
 
   <div class="tiles">
-    <button data-go="password">
-      <strong>🔑</strong><b>Password Lab</b>
-      <small>Secure password generator</small>
-    </button>
-
-    <button data-go="fingerprint">
-      <strong>👆</strong><b>Fingerprint Lab</b>
-      <small>Biometric authentication</small>
-    </button>
-
-    <button data-go="network">
-      <strong>🌐</strong><b>Network Lab</b>
-      <small>Connection information</small>
-    </button>
-
-    <button data-go="security">
-      <strong>🛡</strong><b>Security Center</b>
-      <small>Account protection</small>
-    </button>
-
-    <button data-go="location">
-      <strong>📍</strong><b>Location Center</b>
-      <small>Own device location</small>
-    </button>
-
-    <button data-go="device">
-      <strong>▣</strong><b>Device Monitor</b>
-      <small>Device information</small>
-    </button>
-
-    <button data-go="link-analyzer">
-      <strong>🔗</strong><b>Link Analyzer</b>
-      <small>URL safety analysis</small>
-    </button>
-
-    <button data-go="number-intelligence">
-      <strong>📱</strong><b>Number Intelligence</b>
-      <small>Number format checker</small>
-    </button>
-
-    <button data-go="photo-vault">
-      <strong>🖼</strong><b>Photo Vault</b>
-      <small>Personal photo selection</small>
-    </button>
-
-    <button data-go="permissions">
-      <strong>🔐</strong><b>Permission Manager</b>
-      <small>Consent-based access</small>
-    </button>
-
-    <button data-go="activation">
-      <strong>⭐</strong><b>Pro Activation</b>
-      <small>License management</small>
-    </button>
+    <button data-go="password"><strong>🔑</strong><b>Password Lab</b><small>Password tools</small></button>
+    <button data-go="fingerprint"><strong>👆</strong><b>Fingerprint Lab</b><small>Biometric authentication</small></button>
+    <button data-go="secure-vault"><strong>🔒</strong><b>Secure Vault</b><small>Private secure storage</small></button>
+    <button data-go="network"><strong>🌐</strong><b>Network Lab</b><small>Connection information</small></button>
+    <button data-go="security"><strong>🛡</strong><b>Security Center</b><small>Security checklist</small></button>
+    <button data-go="location"><strong>📍</strong><b>Location Center</b><small>Own device location</small></button>
+    <button data-go="device"><strong>▣</strong><b>Device Monitor</b><small>Device information</small></button>
+    <button data-go="link-analyzer"><strong>🔗</strong><b>Link Analyzer</b><small>URL safety analysis</small></button>
+    <button data-go="number-intelligence"><strong>📱</strong><b>Number Intelligence</b><small>Number format checker</small></button>
+    <button data-go="photo-vault"><strong>🖼</strong><b>Photo Vault</b><small>Personal photo selection</small></button>
+    <button data-go="permissions"><strong>🔐</strong><b>Permission Manager</b><small>Consent-based access</small></button>
+    <button data-go="activation"><strong>⭐</strong><b>Pro Activation</b><small>License management</small></button>
   </div>
 
-  <p class="note">HORIZON BLUE · Personal Security Toolkit</p>
+  <p class="note">HORIZON BLUE PRO · Personal Security Toolkit</p>
 </section>
 
 <!-- PERMISSION MANAGER -->
 <section class="page" id="permissions">
-
   <h2>Permission Manager</h2>
 
   <div class="panel">
     <h3>Consent-Based Access Control</h3>
-    <p class="muted">
-      বাস্তব তথ্যের অ্যাক্সেসের জন্য সংশ্লিষ্ট ব্যক্তির
-      স্পষ্ট সম্মতি এবং প্রয়োজনীয় অফিসিয়াল অনুমোদন প্রয়োজন।
-    </p>
+    <p class="muted">বাস্তব অ্যাক্সেসের জন্য ব্যবহারকারীর স্পষ্ট সম্মতি প্রয়োজন।</p>
 
     <div class="permission-card">
       <h3>📍 Location Access</h3>
-      <p>নিজের সম্মতিতে লোকেশন শেয়ারিং।</p>
+      <p>নিজের লোকেশন ব্যবহারের অনুমতি।</p>
       <button onclick="requestAccess('location')">Request Access</button>
     </div>
 
     <div class="permission-card">
       <h3>💬 Messages</h3>
-      <p>শুধু সমর্থিত ও অনুমোদিত শেয়ারিং।</p>
+      <p>সমর্থিত অফিসিয়াল শেয়ারিং ব্যবস্থা।</p>
       <button onclick="requestAccess('messages')">Request Access</button>
     </div>
 
     <div class="permission-card">
       <h3>🖼 Photos & Videos</h3>
-      <p>ব্যবহারকারীর নির্বাচিত ফাইল।</p>
+      <p>ব্যবহারকারীর নির্বাচিত মিডিয়া।</p>
       <button onclick="requestAccess('media')">Request Access</button>
     </div>
 
@@ -171,7 +126,7 @@
 
     <div class="permission-card">
       <h3>WhatsApp</h3>
-      <p>অফিসিয়াল শেয়ারিং ফিচার।</p>
+      <p>ব্যবহারকারীর অনুমোদিত শেয়ারিং।</p>
       <button onclick="requestAccess('whatsapp')">Request Access</button>
     </div>
 
@@ -193,9 +148,7 @@
       <button onclick="requestAccess('x')">Request Access</button>
     </div>
 
-    <div id="permissionStatus">
-      No access requests created yet.
-    </div>
+    <div id="permissionStatus">No access requests created yet.</div>
   </div>
 </section>
 
@@ -233,7 +186,6 @@
     <h3>Passphrase Generator</h3>
     <input id="clue" placeholder="Enter words separated by commas">
     <button id="makePhrase">Create Passphrase</button>
-
     <div class="result">
       <code id="phraseOut">—</code>
       <button id="copyPhrase" class="secondary">Copy</button>
@@ -255,6 +207,51 @@
   </div>
 </section>
 
+<!-- SECURE VAULT -->
+<section class="page" id="secure-vault">
+  <h2>🔒 Secure Vault <span class="pro">PRO</span></h2>
+
+  <div class="panel">
+    <div class="orb">🔐</div>
+    <h3>Private Security Storage</h3>
+    <p class="muted">নিজের ব্যক্তিগত নোট নিরাপদে রাখার জন্য Vault।</p>
+
+    <label for="vaultPin">Vault PIN</label>
+    <input
+      id="vaultPin"
+      type="password"
+      inputmode="numeric"
+      maxlength="8"
+      placeholder="Enter 6-8 digit PIN"
+      autocomplete="off">
+
+    <button id="vaultUnlock">Unlock Vault</button>
+    <p id="vaultStatus" class="muted">Vault locked.</p>
+  </div>
+
+  <div class="panel" id="vaultContent" hidden>
+    <h3>Private Notes</h3>
+
+    <label for="vaultTitle">Note Title</label>
+    <input id="vaultTitle" type="text" maxlength="80" placeholder="Note title">
+
+    <label for="vaultNote">Your Private Note</label>
+    <textarea id="vaultNote" rows="5" maxlength="10000" placeholder="Write your private note..."></textarea>
+
+    <button id="vaultSave">Save Secure Note</button>
+
+    <div id="vaultNotes"></div>
+
+    <button id="vaultLock" class="secondary">Lock Vault</button>
+  </div>
+
+  <p class="muted">
+    Vault-এর প্রকৃত encryption, PIN verification এবং নিরাপদ storage
+    JavaScript ও Android স্তরে পরবর্তী ধাপে যুক্ত করা হবে।
+    এই সংস্করণে গোপন তথ্য সংরক্ষণ কোরো না।
+  </p>
+</section>
+
 <!-- NETWORK -->
 <section class="page" id="network">
   <h2>Network Lab</h2>
@@ -274,12 +271,7 @@
 
   <div class="panel">
     <h3>Account Security Checklist</h3>
-
-    <div class="stat">
-      <span>Completed</span>
-      <b id="securityCount">0 / 5</b>
-    </div>
-
+    <div class="stat"><span>Completed</span><b id="securityCount">0 / 5</b></div>
     <div class="meter"><span id="securityBar"></span></div>
     <p id="securityPercent" class="muted">0% completed</p>
 
@@ -298,7 +290,6 @@
   <div class="panel">
     <h3>📍 My Device Location</h3>
     <p class="muted">নিজের ডিভাইসের লোকেশন দেখতে অনুমতি দাও।</p>
-
     <button id="locate">Get My Location</button>
 
     <div class="stat">
@@ -311,22 +302,12 @@
 
   <div class="panel">
     <h3>🔵 Live Location Sharing</h3>
-
-    <div class="stat">
-      <span>Maximum Duration</span>
-      <b>7 Days</b>
-    </div>
-
-    <div class="stat">
-      <span>Consent</span>
-      <b>Required</b>
-    </div>
-
+    <div class="stat"><span>Maximum Duration</span><b>7 Days</b></div>
+    <div class="stat"><span>Consent</span><b>Required</b></div>
     <p class="muted">
-      নিজের লোকেশন অন্য কারও সঙ্গে শেয়ার করার ব্যবস্থা।
-      শেয়ার বন্ধ করার নিয়ন্ত্রণ সবসময় ব্যবহারকারীর হাতে থাকবে।
+      নিজের লোকেশন শেয়ার করার ব্যবস্থা। ব্যবহারকারী যেকোনো সময়
+      শেয়ার বন্ধ করতে পারবেন।
     </p>
-
     <p class="muted">
       Live sharing এখনো সার্ভারের সঙ্গে সংযুক্ত হয়নি।
       অন্য ব্যক্তির লোকেশন তাঁর স্পষ্ট সম্মতি ছাড়া পাওয়া যাবে না।
@@ -354,14 +335,9 @@
 
   <div class="panel">
     <h3>URL Safety Check</h3>
-    <p class="muted">
-      সন্দেহজনক লিংকের প্রাথমিক নিরাপত্তা পরীক্ষা করো।
-    </p>
+    <p class="muted">সন্দেহজনক লিংকের প্রাথমিক নিরাপত্তা পরীক্ষা করো।</p>
 
-    <input id="hb-link-input"
-      type="url"
-      placeholder="https://example.com">
-
+    <input id="hb-link-input" type="url" placeholder="https://example.com">
     <button onclick="horizonLinkAnalyzer()">Analyze Link</button>
 
     <div id="hb-link-result" class="result">
@@ -369,8 +345,7 @@
     </div>
 
     <p class="muted">
-      এটি প্রাথমিক পরীক্ষা। কোনো লিংক ১০০% নিরাপদ
-      বলে নিশ্চয়তা দেয় না। সন্দেহজনক লিংক খুলবে না।
+      এটি প্রাথমিক পরীক্ষা। কোনো লিংক ১০০% নিরাপদ বলে নিশ্চয়তা দেয় না।
     </p>
   </div>
 </section>
@@ -381,15 +356,9 @@
 
   <div class="panel">
     <h3>Mobile Number Checker</h3>
+    <p class="muted">নম্বরের দেশ ও ফরম্যাট যাচাই।</p>
 
-    <p class="muted">
-      নম্বরের দেশ, ফরম্যাট ও সম্ভাব্য অপারেটর যাচাই।
-    </p>
-
-    <input id="hb-number-input"
-      type="tel"
-      placeholder="+8801XXXXXXXXX">
-
+    <input id="hb-number-input" type="tel" placeholder="+8801XXXXXXXXX">
     <button onclick="horizonNumberAnalyzer()">Analyze Number</button>
 
     <div id="hb-number-result" class="result">
@@ -405,23 +374,14 @@
 
 <!-- PHOTO VAULT -->
 <section class="page" id="photo-vault">
-  <h2>🔐 Private Photo Vault</h2>
+  <h2>🖼 Private Photo Vault</h2>
 
   <div class="panel">
     <h3>Select Personal Photos</h3>
-
-    <p class="muted">
-      নিজের নির্বাচিত ছবি দেখো।
-    </p>
+    <p class="muted">নিজের নির্বাচিত ছবি Preview করো।</p>
 
     <label for="hb-photo-input">Select Photos</label>
-
-    <input
-      type="file"
-      id="hb-photo-input"
-      accept="image/*"
-      multiple
-    >
+    <input type="file" id="hb-photo-input" accept="image/*" multiple>
 
     <div class="stat">
       <span>Selected Photos</span>
@@ -431,8 +391,8 @@
     <div id="hb-photo-gallery" class="tiles"></div>
 
     <p class="muted">
-      বর্তমান সংস্করণে ছবি শুধু অস্থায়ীভাবে Preview হয়।
-      এখনো Encrypted Storage বা স্থায়ী Private Vault তৈরি হয়নি।
+      বর্তমান সংস্করণে ছবি অস্থায়ী Preview হয়।
+      এটি এখনো encrypted বা স্থায়ী Private Vault নয়।
     </p>
   </div>
 </section>
@@ -443,7 +403,7 @@
 
   <div class="terminal">
     <div id="termout">
-      HORIZON BLUE SAFE CONSOLE v3.0
+      HORIZON BLUE SAFE CONSOLE v4.0
       Type help to see commands.
     </div>
 
@@ -464,35 +424,16 @@
   <div class="panel">
     <div class="orb">⭐</div>
     <h3>HORIZON BLUE License Center</h3>
-    <p>Manage your official Pro license.</p>
 
-    <div class="stat">
-      <span>Edition</span>
-      <b id="licenseEdition">Free Edition</b>
-    </div>
-
-    <div class="stat">
-      <span>License Status</span>
-      <b id="licenseStatus">Not Activated</b>
-    </div>
-
-    <div class="stat">
-      <span>Expiry Date</span>
-      <b id="licenseExpiry">—</b>
-    </div>
+    <div class="stat"><span>Edition</span><b id="licenseEdition">Free Edition</b></div>
+    <div class="stat"><span>License Status</span><b id="licenseStatus">Not Activated</b></div>
+    <div class="stat"><span>Expiry Date</span><b id="licenseExpiry">—</b></div>
 
     <label for="licenseKey">Enter Activation Key</label>
-    <input id="licenseKey"
-      type="text"
-      placeholder="HB-PRO-XXXX-XXXX"
-      autocomplete="off"
-      maxlength="40">
+    <input id="licenseKey" type="text" placeholder="HB-PRO-XXXX-XXXX" autocomplete="off" maxlength="40">
 
     <button id="activateLicense">Verify & Activate</button>
-
-    <p id="licenseMessage" class="muted">
-      Enter your official license key.
-    </p>
+    <p id="licenseMessage" class="muted">Enter your official license key.</p>
   </div>
 
   <div class="panel">
@@ -505,13 +446,12 @@
   </div>
 </section>
 
-<footer>HORIZON BLUE · Android Edition · v3.0</footer>
+<footer>HORIZON BLUE · Android Edition · v4.0</footer>
 
 </main>
 </div>
 
-<!-- Load JavaScript after all page elements -->
 <script src="app.js"></script>
 
 </body>
-  </html>
+                                             </html>
