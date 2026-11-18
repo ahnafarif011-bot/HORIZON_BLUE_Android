@@ -1,4 +1,3 @@
-
 package com.horizonblue.app;
 
 import android.Manifest;
@@ -24,7 +23,6 @@ import java.util.concurrent.Executor;
 public class MainActivity extends FragmentActivity {
 
     private WebView webView;
-
     private GeolocationPermissions.Callback geoCallback;
     private String geoOrigin;
 
@@ -61,6 +59,7 @@ public class MainActivity extends FragmentActivity {
                 ) {
                     biometricShowing = false;
                     sendBiometricResult(true);
+
                     Toast.makeText(
                         MainActivity.this,
                         "Authentication Successful",
@@ -141,10 +140,7 @@ public class MainActivity extends FragmentActivity {
 
         @JavascriptInterface
         public void authenticate() {
-
-            runOnUiThread(() ->
-                authenticateBiometric()
-            );
+            runOnUiThread(() -> authenticateBiometric());
         }
     }
 
@@ -206,6 +202,14 @@ public class MainActivity extends FragmentActivity {
                 String origin,
                 GeolocationPermissions.Callback callback
             ) {
+
+                // Allow only our local app page
+                if (origin == null ||
+                    !origin.startsWith("file:///android_asset")) {
+
+                    callback.invoke(origin, false, false);
+                    return;
+                }
 
                 geoOrigin = origin;
                 geoCallback = callback;
@@ -303,11 +307,8 @@ public class MainActivity extends FragmentActivity {
     public void onBackPressed() {
 
         if (webView != null && webView.canGoBack()) {
-
             webView.goBack();
-
         } else {
-
             super.onBackPressed();
         }
     }
