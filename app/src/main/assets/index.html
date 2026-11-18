@@ -394,5 +394,42 @@ Type help to see commands.</div>
 </div>
 
 <script src="app.js"></script>
+  <!-- HORIZON BLUE PRO - PHOTO VAULT -->
+
+<section class="page" id="photo-vault">
+  <div class="panel">
+    <h2>🔐 Private Photo Vault</h2>
+    <p class="description">
+      Select and manage your personal photos.
+    </p>
+
+    <label for="hb-photo-input">
+      Select Photos
+    </label>
+
+    <input
+      type="file"
+      id="hb-photo-input"
+      accept="image/*"
+      multiple
+    >
+
+    <div class="stat">
+      <span>Selected Photos</span>
+      <b id="hb-photo-count">0</b>
+    </div>
+
+    <div id="hb-photo-gallery"
+         class="tiles">
+    </div>
+
+    <p class="description">
+      Photos are selected through Android's
+      system photo picker.
+    </p>
+  </div>
+</section>
+
+<!-- END PHOTO VAULT -->
 </body>
                        </html>
