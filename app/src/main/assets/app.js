@@ -549,3 +549,128 @@ if (document.readyState === "loading") {
 } else {
   initializeApp();
        }
+/* ==================================
+   HORIZON BLUE PRO
+   LINK ANALYZER MODULE v1.0
+================================== */
+
+function horizonLinkAnalyzer() {
+  const input = document.getElementById("hb-link-input");
+  const output = document.getElementById("hb-link-result");
+
+  if (!input || !output) {
+    alert("Link Analyzer UI element not found.");
+    return;
+  }
+
+  const raw = input.value.trim();
+
+  if (!raw) {
+    output.innerHTML = "⚠️ Please enter a URL.";
+    return;
+  }
+
+  let url;
+
+  try {
+    url = new URL(
+      /^https?:\/\//i.test(raw) ? raw : "https://" + raw
+    );
+  } catch {
+    output.textContent = "❌ Invalid URL format.";
+    return;
+  }
+
+  if (!["http:", "https:"].includes(url.protocol)) {
+    output.textContent = "❌ Unsupported URL protocol.";
+    return;
+  }
+
+  const hostname = url.hostname.toLowerCase();
+  const warnings = [];
+
+  if (url.protocol !== "https:") {
+    warnings.push("HTTPS encryption is not enabled.");
+  }
+
+  if (url.username || url.password) {
+    warnings.push("URL contains embedded login information.");
+  }
+
+  if (hostname.includes("xn--")) {
+    warnings.push("Internationalized domain name detected.");
+  }
+
+  if (/^\d{1,3}(\.\d{1,3}){3}$/.test(hostname)) {
+    warnings.push("URL uses an IP address instead of a domain.");
+  }
+
+  if (hostname.split(".").length > 5) {
+    warnings.push("Unusually long subdomain structure.");
+  }
+
+  const suspiciousWords = [
+    "verify-account",
+    "free-gift",
+    "login-confirm",
+    "password-reset",
+    "account-suspended",
+    "claim-prize"
+  ];
+
+  const fullUrl = url.href.toLowerCase();
+
+  suspiciousWords.forEach(word => {
+    if (fullUrl.includes(word)) {
+      warnings.push("Suspicious URL keyword: " + word);
+    }
+  });
+
+  const status = warnings.length
+    ? "⚠️ CAUTION – Potential warning signs found"
+    : "ℹ️ No basic warning signs detected";
+
+  output.replaceChildren();
+
+  const heading = document.createElement("h3");
+  heading.textContent = status;
+
+  const domain = document.createElement("p");
+  domain.textContent = "Domain: " + hostname;
+
+  const protocol = document.createElement("p");
+  protocol.textContent = "Protocol: " + url.protocol;
+
+  const warningTitle = document.createElement("h4");
+  warningTitle.textContent = "Analysis Details";
+
+  const list = document.createElement("ul");
+
+  if (warnings.length) {
+    warnings.forEach(item => {
+      const li = document.createElement("li");
+      li.textContent = item;
+      list.appendChild(li);
+    });
+  } else {
+    const li = document.createElement("li");
+    li.textContent =
+      "No obvious suspicious patterns found in this local check.";
+    list.appendChild(li);
+  }
+
+  const disclaimer = document.createElement("p");
+  disclaimer.textContent =
+    "This is a basic local analysis, not a guarantee that the website is safe. Do not enter passwords or sensitive information on untrusted websites.";
+
+  output.append(
+    heading,
+    domain,
+    protocol,
+    warningTitle,
+    list,
+    disclaimer
+  );
+}
+
+/* End Link Analyzer Module */
