@@ -23,5 +23,15 @@
             </intent-filter>
 
         </activity>
+        <!-- HORIZON BLUE PRO LOCATION PERMISSIONS -->
+
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+<!-- Internet for consent-based location sharing -->
+<uses-permission android:name="android.permission.INTERNET" />
+
+<!-- END LOCATION PERMISSIONS -->
     </application>
 </manifest>
