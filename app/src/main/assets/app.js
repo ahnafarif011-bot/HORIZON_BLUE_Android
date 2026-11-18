@@ -674,3 +674,99 @@ function horizonLinkAnalyzer() {
 }
 
 /* End Link Analyzer Module */
+/* ==================================
+   HORIZON BLUE PRO
+   MOBILE NUMBER INTELLIGENCE v1.0
+================================== */
+
+function horizonNumberAnalyzer() {
+  const input = document.getElementById("hb-number-input");
+  const output = document.getElementById("hb-number-result");
+
+  if (!input || !output) {
+    alert("Number Analyzer UI not found.");
+    return;
+  }
+
+  const number = input.value.trim().replace(/[\s()-]/g, "");
+
+  if (!number) {
+    output.textContent = "Please enter a mobile number.";
+    return;
+  }
+
+  if (!/^\+?[0-9]{7,15}$/.test(number)) {
+    output.textContent = "Invalid number format.";
+    return;
+  }
+
+  let country = "Unknown";
+  let countryCode = "Unknown";
+
+  if (number.startsWith("+880") || number.startsWith("880")) {
+    country = "Bangladesh";
+    countryCode = "+880";
+  } else if (number.startsWith("+91") || number.startsWith("91")) {
+    country = "India";
+    countryCode = "+91";
+  } else if (number.startsWith("+1")) {
+    country = "USA / Canada";
+    countryCode = "+1";
+  } else if (number.startsWith("+44")) {
+    country = "United Kingdom";
+    countryCode = "+44";
+  } else if (number.startsWith("+971")) {
+    country = "United Arab Emirates";
+    countryCode = "+971";
+  }
+
+  let operator = "Not available";
+
+  const bdNumber = number.replace(/^\+?880/, "");
+
+  if (/^01[3-9]\d{8}$/.test(bdNumber)) {
+    const prefix = bdNumber.substring(0, 3);
+
+    const operators = {
+      "013": "Grameenphone",
+      "017": "Grameenphone",
+      "014": "Banglalink",
+      "019": "Banglalink",
+      "015": "Teletalk",
+      "016": "Airtel",
+      "018": "Robi"
+    };
+
+    operator = operators[prefix] || "Unknown";
+  }
+
+  const rows = [
+    ["Input Number", number],
+    ["Country", country],
+    ["Country Code", countryCode],
+    ["Possible Operator", operator],
+    ["Format", "Valid basic format"],
+    ["Privacy", "No identity lookup performed"]
+  ];
+
+  output.replaceChildren();
+
+  const heading = document.createElement("h3");
+  heading.textContent = "Number Analysis Result";
+
+  output.appendChild(heading);
+
+  rows.forEach(([label, value]) => {
+    const p = document.createElement("p");
+    p.textContent = label + ": " + value;
+    output.appendChild(p);
+  });
+
+  const note = document.createElement("p");
+  note.textContent =
+    "Operator identification is only a prefix-based estimate. Number portability may make it inaccurate.";
+
+  output.appendChild(note);
+}
+
+/* END MOBILE NUMBER INTELLIGENCE */
