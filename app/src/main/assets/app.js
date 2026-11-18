@@ -1,391 +1,304 @@
-'use strict';
+"use strict";
 
-/* =====================================
-   HORIZON BLUE - CORE APP
-   Version 3.0
-   ===================================== */
+/* =================================
+   HORIZON BLUE PRO v3.0
+   Personal Security Toolkit
+================================= */
 
 const $ = id => document.getElementById(id);
 
-const setText = (id, value) => {
+function setText(id, value) {
   const el = $(id);
   if (el) el.textContent = value;
-};
+}
 
-const on = (id, event, callback) => {
+function on(id, event, callback) {
   const el = $(id);
   if (el) el.addEventListener(event, callback);
-};
+}
 
-/* =====================================
-   1. NAVIGATION
-   ===================================== */
+/* ---------- NAVIGATION ---------- */
 
 function page(name) {
-  document.querySelectorAll('.page').forEach(p => {
-    p.classList.toggle('show', p.id === name);
+  document.querySelectorAll(".page").forEach(section => {
+    section.classList.toggle("show", section.id === name);
   });
 
-  document.querySelectorAll('.navbtn').forEach(b => {
-    b.classList.toggle('active', b.dataset.page === name);
+  document.querySelectorAll(".navbtn").forEach(button => {
+    button.classList.toggle("active", button.dataset.page === name);
   });
 
-  if (name === 'permissions') {
-    getPermissionStatus();
-  }
+  window.scrollTo({ top: 0, behavior: "smooth" });
 
-  window.scrollTo(0, 0);
+  if (name === "network") updateNetwork();
+  if (name === "device") updateDevice();
+  if (name === "permissions") getPermissionStatus();
 }
 
-document.querySelectorAll('[data-page]').forEach(b => {
-  b.addEventListener('click', () => page(b.dataset.page));
+document.querySelectorAll("[data-page]").forEach(button => {
+  button.addEventListener("click", () => page(button.dataset.page));
 });
 
-document.querySelectorAll('[data-go]').forEach(b => {
-  b.addEventListener('click', () => page(b.dataset.go));
+document.querySelectorAll("[data-go]").forEach(button => {
+  button.addEventListener("click", () => page(button.dataset.go));
 });
 
-/* =====================================
-   2. SECURE RANDOM GENERATOR
-   ===================================== */
+/* ---------- PASSWORD GENERATOR ---------- */
 
 function secureIndex(max) {
-  if (!Number.isSafeInteger(max) || max < 1 ||
-      max > 4294967296) {
-    throw new Error('Invalid random range');
+  if (!Number.isSafeInteger(max) || max < 1) {
+    throw new Error("Invalid random range");
   }
 
-  if (!window.crypto?.getRandomValues) {
-    throw new Error('Secure random unavailable');
+  if (window.crypto && crypto.getRandomValues) {
+    const array = new Uint32Array(1);
+    const limit = Math.floor(4294967296 / max) * max;
+
+    do {
+      crypto.getRandomValues(array);
+    } while (array[0] >= limit);
+
+    return array[0] % max;
   }
 
-  const limit = Math.floor(4294967296 / max) * max;
-  const data = new Uint32Array(1);
-  let value;
-
-  do {
-    crypto.getRandomValues(data);
-    value = data[0];
-  } while (value >= limit);
-
-  return value % max;
-}
-
-function shuffle(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = secureIndex(i + 1);
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-
-  return array;
-}
-
-/* =====================================
-   3. PASSWORD LAB
-   ===================================== */
-
-let currentPassword = '';
-let passwordVisible = false;
-
-on('length', 'input', e => {
-  setText('lenval', e.target.value);
-});
-
-function updateStrength(password) {
-  let score = 0;
-
-  if (password.length >= 12) score++;
-  if (password.length >= 20) score++;
-  if (/[A-Z]/.test(password)) score++;
-  if (/[a-z]/.test(password)) score++;
-  if (/[0-9]/.test(password)) score++;
-  if (/[^A-Za-z0-9]/.test(password)) score++;
-
-  const percent = Math.round(score / 6 * 100);
-  const bar = $('strengthBar');
-
-  if (bar) bar.style.width = percent + '%';
-
-  const label = score <= 2 ? 'Weak' :
-                score <= 4 ? 'Medium' : 'Strong';
-
-  setText('strengthText',
-    'Strength: ' + label + ' · ' + percent + '%');
+  throw new Error("Secure random generator unavailable");
 }
 
 function generatePassword() {
-  try {
-    const groups = [];
+  const upper = $("upper")?.checked;
+  const lower = $("lower")?.checked;
+  const nums = $("nums")?.checked;
+  const symbols = $("symbols")?.checked;
 
-    if ($('upper')?.checked)
-      groups.push('ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+  let groups = [];
 
-    if ($('lower')?.checked)
-      groups.push('abcdefghijklmnopqrstuvwxyz');
+  if (upper) groups.push("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+  if (lower) groups.push("abcdefghijklmnopqrstuvwxyz");
+  if (nums) groups.push("0123456789");
+  if (symbols) groups.push("!@#$%^&*()-_=+[]{}?");
 
-    if ($('nums')?.checked)
-      groups.push('0123456789');
-
-    if ($('symbols')?.checked)
-      groups.push('!@#$%^&*()-_=+[]{}?');
-
-    if (!groups.length) {
-      setText('passMsg', 'Select a character type.');
-      return;
-    }
-
-    const length = Number($('length')?.value || 16);
-
-    if (length < groups.length || length > 64) {
-      setText('passMsg', 'Choose a valid length (4–64).');
-      return;
-    }
-
-    const pool = groups.join('');
-    const chars = groups.map(group =>
-      group[secureIndex(group.length)]
-    );
-
-    while (chars.length < length) {
-      chars.push(pool[secureIndex(pool.length)]);
-    }
-
-    currentPassword = shuffle(chars).join('');
-    passwordVisible = false;
-
-    setText('passwordOut', '•'.repeat(length));
-    setText('togglePass', 'Show');
-
-    updateStrength(currentPassword);
-
-    setText('passMsg',
-      'Generated locally. Not uploaded or saved.');
-  } catch (error) {
-    setText('passMsg', error.message);
-  }
-}
-
-on('generate', 'click', generatePassword);
-
-on('togglePass', 'click', () => {
-  if (!currentPassword) return;
-
-  passwordVisible = !passwordVisible;
-
-  setText('passwordOut',
-    passwordVisible ? currentPassword :
-    '•'.repeat(currentPassword.length));
-
-  setText('togglePass',
-    passwordVisible ? 'Hide' : 'Show');
-});
-
-/* =====================================
-   4. CLIPBOARD
-   ===================================== */
-
-async function copyText(text) {
-  if (!text || !navigator.clipboard?.writeText) {
-    return false;
-  }
-
-  try {
-    await navigator.clipboard.writeText(text);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-on('copyPass', 'click', async () => {
-  if (!currentPassword) {
-    setText('passMsg', 'Generate a password first.');
+  if (!groups.length) {
+    setText("passMsg", "Select at least one character type.");
     return;
   }
 
-  const ok = await copyText(currentPassword);
+  const length = Number($("length")?.value || 20);
 
-  setText('passMsg', ok ?
-    'Password copied.' :
-    'Clipboard unavailable. Copy manually.');
+  if (length < groups.length) {
+    setText("passMsg", "Increase password length.");
+    return;
+  }
+
+  let chars = groups.map(group => group[secureIndex(group.length)]);
+
+  const all = groups.join("");
+
+  while (chars.length < length) {
+    chars.push(all[secureIndex(all.length)]);
+  }
+
+  for (let i = chars.length - 1; i > 0; i--) {
+    const j = secureIndex(i + 1);
+    [chars[i], chars[j]] = [chars[j], chars[i]];
+  }
+
+  const password = chars.join("");
+
+  setText("passwordOut", password);
+  setText("passMsg", "Generated locally on this device.");
+
+  const output = $("passwordOut");
+  if (output) output.dataset.password = password;
+
+  if (output) output.style.filter = "none";
+
+  const strength = Math.min(
+    100,
+    Math.round((length / 64) * 100)
+  );
+
+  const bar = $("strengthBar");
+  if (bar) bar.style.width = strength + "%";
+
+  setText(
+    "strengthText",
+    length >= 20 ? "Long password — good starting point."
+      : length >= 12 ? "Medium length — consider making it longer."
+      : "Short password — increase the length."
+  );
+}
+
+on("length", "input", event => {
+  setText("lenval", event.target.value);
 });
 
-on('copyPhrase', 'click', async () => {
-  const phrase = $('phraseOut')?.dataset.value || '';
-  const ok = await copyText(phrase);
+on("generate", "click", generatePassword);
 
-  setText('passMsg', ok ?
-    'Passphrase copied.' :
-    'Clipboard unavailable.');
-});
+on("togglePass", "click", () => {
+  const output = $("passwordOut");
+  const button = $("togglePass");
 
-/* =====================================
-   5. PASSPHRASE GENERATOR
-   ===================================== */
+  if (!output || !button) return;
 
-on('makePhrase', 'click', () => {
-  try {
-    const words = ($('clue')?.value || '')
-      .split(/[,\s]+/)
-      .map(w => w.trim())
-      .filter(Boolean)
-      .slice(0, 3);
-
-    if (!words.length) {
-      setText('phraseOut', 'Enter some words first.');
-      return;
-    }
-
-    const extras = [
-      'Orbit', 'Nova', 'River', 'Sky',
-      'Forest', 'Silver', 'Cloud',
-      'Ocean', 'Comet', 'Amber'
-    ];
-
-    const extra = extras[secureIndex(extras.length)];
-    const number = 10000 + secureIndex(90000);
-
-    const phrase =
-      [...words, extra, String(number)].join('-');
-
-    const output = $('phraseOut');
-
-    if (output) {
-      output.textContent = phrase;
-      output.dataset.value = phrase;
-    }
-  } catch (error) {
-    setText('phraseOut', error.message);
+  if (output.style.filter === "blur(5px)") {
+    output.style.filter = "none";
+    button.textContent = "Hide";
+  } else {
+    output.style.filter = "blur(5px)";
+    button.textContent = "Show";
   }
 });
 
-/* =====================================
-   6. NETWORK MONITOR
-   ===================================== */
-
-function net() {
-  setText('online',
-    navigator.onLine ? 'Online' : 'Offline');
-
-  setText('connection',
-    navigator.connection?.effectiveType || 'Not exposed');
-
-  setText('lang',
-    navigator.language || '—');
-
-  setText('platform',
-    navigator.userAgentData?.platform ||
-    navigator.platform || 'Not exposed');
-}
-
-on('refreshNet', 'click', net);
-
-window.addEventListener('online', net);
-window.addEventListener('offline', net);
-
-net();
-
-/* =====================================
-   7. DEVICE MONITOR
-   ===================================== */
-
-async function device() {
-  setText('screen',
-    screen.width + ' × ' + screen.height +
-    ' · ' + devicePixelRatio + 'x');
-
-  setText('browser',
-    navigator.userAgentData?.brands
-      ?.map(x => x.brand).join(', ') ||
-    'Browser info limited');
-
-  setText('cores',
-    navigator.hardwareConcurrency || 'Not exposed');
-
-  setText('memory',
-    navigator.deviceMemory
-      ? navigator.deviceMemory + ' GB (approx.)'
-      : 'Not exposed');
-
-  setText('battery', 'Checking...');
+async function copyText(value, messageId) {
+  if (!value) {
+    setText(messageId, "Nothing to copy.");
+    return;
+  }
 
   try {
-    if (!navigator.getBattery) {
-      setText('battery', 'Not exposed');
-      return;
-    }
-
-    const battery = await navigator.getBattery();
-
-    setText('battery',
-      Math.round(battery.level * 100) + '%' +
-      (battery.charging ? ' · Charging' : ''));
-
+    await navigator.clipboard.writeText(value);
+    setText(messageId, "Copied successfully.");
   } catch {
-    setText('battery', 'Unavailable');
+    setText(messageId, "Clipboard unavailable. Select and copy manually.");
   }
 }
 
-on('refreshDevice', 'click', device);
-device();
+on("copyPass", "click", () => {
+  copyText($("passwordOut")?.dataset.password, "passMsg");
+});
 
-/* =====================================
-   8. SECURITY CHECKLIST
-   ===================================== */
+/* ---------- PASSPHRASE ---------- */
+
+on("makePhrase", "click", () => {
+  const raw = $("clue")?.value || "";
+
+  const words = raw
+    .split(",")
+    .map(word => word.trim())
+    .filter(Boolean);
+
+  if (words.length < 3) {
+    setText("phraseOut", "Enter at least 3 words.");
+    return;
+  }
+
+  const selected = [];
+
+  while (selected.length < 4) {
+    selected.push(words[secureIndex(words.length)]);
+  }
+
+  setText("phraseOut", selected.join("-"));
+});
+
+on("copyPhrase", "click", () => {
+  copyText($("phraseOut")?.textContent, "phraseOut");
+});
+
+/* ---------- NETWORK MONITOR ---------- */
+
+function updateNetwork() {
+  setText(
+    "online",
+    navigator.onLine ? "Online" : "Offline"
+  );
+
+  const connection =
+    navigator.connection ||
+    navigator.mozConnection ||
+    navigator.webkitConnection;
+
+  setText(
+    "connection",
+    connection?.effectiveType || "Not available"
+  );
+
+  setText(
+    "lang",
+    navigator.language || "Unknown"
+  );
+
+  setText(
+    "platform",
+    navigator.platform || "Not available"
+  );
+}
+
+on("refreshNet", "click", updateNetwork);
+
+window.addEventListener("online", updateNetwork);
+window.addEventListener("offline", updateNetwork);
+
+/* ---------- SECURITY CHECKLIST ---------- */
 
 function updateSecurity() {
-  const checks = [
-    ...document.querySelectorAll('.securityCheck')
-  ];
+  const checks = [...document.querySelectorAll(".securityCheck")];
 
-  const done = checks.filter(c => c.checked).length;
+  const completed = checks.filter(item => item.checked).length;
+  const total = checks.length;
 
-  const percent = checks.length
-    ? Math.round(done / checks.length * 100)
+  const percent = total
+    ? Math.round((completed / total) * 100)
     : 0;
 
-  setText('securityCount',
-    done + ' / ' + checks.length);
+  setText("securityCount", `${completed} / ${total}`);
+  setText("securityPercent", `${percent}% completed`);
 
-  const bar = $('securityBar');
-  if (bar) bar.style.width = percent + '%';
+  const bar = $("securityBar");
+  if (bar) bar.style.width = percent + "%";
 
-  setText('securityPercent',
-    percent + '% completed');
+  localStorage.setItem(
+    "hb_security_checks",
+    JSON.stringify(checks.map(item => item.checked))
+  );
 }
 
-document.querySelectorAll('.securityCheck').forEach(c => {
-  c.addEventListener('change', updateSecurity);
-});
+function loadSecurity() {
+  try {
+    const saved = JSON.parse(
+      localStorage.getItem("hb_security_checks") || "[]"
+    );
 
-updateSecurity();
+    document.querySelectorAll(".securityCheck").forEach((item, index) => {
+      item.checked = saved[index] === true;
+    });
+  } catch {}
 
-/* =====================================
-   9. OWN DEVICE LOCATION
-   ===================================== */
+  document.querySelectorAll(".securityCheck").forEach(item => {
+    item.addEventListener("change", updateSecurity);
+  });
 
-on('locate', 'click', () => {
+  updateSecurity();
+}
+
+/* ---------- OWN DEVICE LOCATION ---------- */
+
+on("locate", "click", () => {
   if (!navigator.geolocation) {
-    setText('locout', 'Location unavailable.');
+    setText("locout", "Location is not supported by this browser.");
     return;
   }
 
-  setText('locout', 'Waiting for your permission...');
+  setText("locout", "Waiting for your permission...");
 
   navigator.geolocation.getCurrentPosition(
     position => {
-      const lat = position.coords.latitude.toFixed(5);
-      const lon = position.coords.longitude.toFixed(5);
+      const lat = position.coords.latitude;
+      const lon = position.coords.longitude;
 
-      setText('locout',
-        'Latitude: ' + lat +
-        ' · Longitude: ' + lon +
-        ' · Accuracy: ' +
-        Math.round(position.coords.accuracy) + ' m');
+      setText(
+        "locout",
+        `Latitude: ${lat.toFixed(5)} | Longitude: ${lon.toFixed(5)}`
+      );
     },
     error => {
-      setText('locout',
-        'Location unavailable: ' + error.message);
+      const messages = {
+        1: "Location permission denied.",
+        2: "Location unavailable.",
+        3: "Location request timed out."
+      };
+
+      setText("locout", messages[error.code] || "Location error.");
     },
     {
       enableHighAccuracy: true,
@@ -395,270 +308,244 @@ on('locate', 'click', () => {
   );
 });
 
-/* =====================================
-   10. SAFE DEMO TERMINAL
-   ===================================== */
+/* ---------- DEVICE MONITOR ---------- */
 
-const help =
-  'Commands: help, status, date, tools, clear';
+async function updateDevice() {
+  setText(
+    "screen",
+    `${screen.width} × ${screen.height}`
+  );
 
-function run() {
-  const command =
-    ($('command')?.value || '').trim().toLowerCase();
+  setText(
+    "browser",
+    navigator.userAgent
+  );
 
-  let output = '';
+  setText(
+    "cores",
+    navigator.hardwareConcurrency || "Not available"
+  );
 
-  if (command === 'help') {
-    output = help;
-  } else if (command === 'status') {
-    output =
-      'HORIZON BLUE: Running\nNetwork: ' +
-      (navigator.onLine ? 'Online' : 'Offline');
-  } else if (command === 'date') {
-    output = new Date().toString();
-  } else if (command === 'tools') {
-    output =
-      'Password | Fingerprint | Network | Security | Location | Device';
-  } else if (command === 'clear') {
-    setText('termout', 'Console cleared.');
-  } else if (command) {
-    output = 'Unknown command. Type help.';
-  }
+  setText(
+    "memory",
+    navigator.deviceMemory
+      ? navigator.deviceMemory + " GB (approx.)"
+      : "Not available"
+  );
 
-  if (command && command !== 'clear') {
-    const box = $('termout');
+  if (navigator.getBattery) {
+    try {
+      const battery = await navigator.getBattery();
 
-    if (box) {
-      box.textContent += '\n\n' + output;
+      setText(
+        "battery",
+        Math.round(battery.level * 100) + "%"
+      );
+    } catch {
+      setText("battery", "Not available");
     }
+  } else {
+    setText("battery", "Not supported");
   }
-
-  if ($('command')) $('command').value = '';
 }
 
-on('run', 'click', run);
+on("refreshDevice", "click", updateDevice);
 
-on('command', 'keydown', e => {
-  if (e.key === 'Enter') run();
-});
+/* ---------- FINGERPRINT BRIDGE ---------- */
 
-/* =====================================
-   11. ANDROID BIOMETRIC BRIDGE
-   ===================================== */
+on("fingerprintAuth", "click", async () => {
+  setText("fingerprintStatus", "Checking biometric support...");
 
-on('fingerprintAuth', 'click', () => {
-  setText('fingerprintStatus',
-    'Preparing biometric authentication...');
+  try {
+    if (!window.HorizonBiometric ||
+        typeof window.HorizonBiometric.authenticate !== "function") {
+      setText(
+        "fingerprintStatus",
+        "Android biometric bridge is not connected."
+      );
+      return;
+    }
 
-  if (window.HorizonBiometric &&
-      typeof window.HorizonBiometric.authenticate === 'function') {
-    window.HorizonBiometric.authenticate();
-  } else {
-    setText('fingerprintStatus',
-      'Android biometric connection unavailable.');
+    const result = await window.HorizonBiometric.authenticate();
+
+    setText(
+      "fingerprintStatus",
+      result === true || result === "success"
+        ? "Authentication successful."
+        : "Authentication was not completed."
+    );
+  } catch {
+    setText("fingerprintStatus", "Authentication failed or cancelled.");
   }
 });
 
-window.onBiometricResult = function(success, message) {
-  setText('fingerprintStatus',
-    success
-      ? '✓ Authentication successful'
-      : 'Authentication failed: ' +
-        String(message || 'Unknown error'));
+/* ---------- SAFE TERMINAL ---------- */
+
+const terminalCommands = {
+  help:
+    "Available commands:\nhelp\nabout\nstatus\nversion\nclear",
+
+  about:
+    "HORIZON BLUE PRO\nPersonal Security Toolkit",
+
+  status:
+    "Application: Running\nMode: Safe Demo\nExternal access: Disabled",
+
+  version:
+    "HORIZON BLUE v3.0",
+
+  clear: ""
 };
 
-/* =====================================
-   12. SERVICE WORKER
-   ===================================== */
+function runTerminal() {
+  const input = $("command");
+  const output = $("termout");
 
-if ('serviceWorker' in navigator &&
-    location.protocol.startsWith('http')) {
-  navigator.serviceWorker
-    .register('./sw.js')
-    .catch(() => {});
-}
+  if (!input || !output) return;
 
-/* =====================================
-   13. LICENSE CENTER
-   ===================================== */
+  const command = input.value.trim().toLowerCase();
 
-(() => {
-  const keyInput = $('licenseKey');
-  const activateBtn = $('activateLicense');
-  const message = $('licenseMessage');
+  if (!command) return;
 
-  if (!keyInput || !activateBtn || !message) return;
+  if (command === "clear") {
+    output.textContent = "";
+  } else {
+    const result = terminalCommands[command] ||
+      "Unknown command. Type help.";
 
-  function showMessage(text, color) {
-    message.textContent = text;
-    message.style.color = color;
+    output.textContent +=
+      `\n\nhorizon@blue:~$ ${command}\n${result}`;
   }
 
-  setText('licenseEdition', 'Free Edition');
-  setText('licenseStatus', 'Not Activated');
-  setText('licenseExpiry', '—');
+  input.value = "";
+  output.scrollTop = output.scrollHeight;
+}
 
-  activateBtn.addEventListener('click', () => {
-    const key = keyInput.value.trim();
+on("run", "click", runTerminal);
 
-    if (!key) {
-      showMessage(
-        'Please enter your activation key.',
-        '#ff7070'
-      );
-      return;
-    }
+on("command", "keydown", event => {
+  if (event.key === "Enter") runTerminal();
+});
 
-    if (!/^HB-PRO-[A-Z0-9]{4}-[A-Z0-9]{4}$/i.test(key)) {
-      showMessage(
-        'Invalid key format.',
-        '#ff7070'
-      );
-      return;
-    }
-
-    showMessage(
-      'License server is not connected yet.',
-      '#ffc66d'
-    );
-  });
-})();
-
-/* =====================================
-   14. PERMISSION REQUEST DEMO
-   Local demo only. No external access.
-   ===================================== */
+/* ---------- PERMISSION REQUEST MANAGER ---------- */
 
 const ACCESS_TYPES = {
-  location: 'Location',
-  messages: 'Messages',
-  media: 'Photos & Videos',
-  gmail: 'Gmail',
-  facebook: 'Facebook',
-  whatsapp: 'WhatsApp',
-  imo: 'IMO',
-  mobile: 'Mobile Number',
-  x: 'X Account'
+  location: "Location",
+  messages: "Messages",
+  media: "Photos & Videos",
+  gmail: "Gmail",
+  facebook: "Facebook",
+  whatsapp: "WhatsApp",
+  imo: "IMO",
+  mobile: "Mobile Number",
+  x: "X Account"
 };
 
-const REQUEST_STORAGE = 'hb_permission_requests';
-
-function readRequests() {
+function getRequests() {
   try {
-    const data = JSON.parse(
-      localStorage.getItem(REQUEST_STORAGE) || '[]'
+    const requests = JSON.parse(
+      localStorage.getItem("hb_permission_requests") || "[]"
     );
 
-    return Array.isArray(data) ? data : [];
+    const now = Date.now();
+
+    return requests.filter(request =>
+      request.created &&
+      now - request.created < 7 * 24 * 60 * 60 * 1000
+    );
   } catch {
     return [];
   }
 }
 
-function saveRequests(requests) {
+function requestAccess(type) {
+  if (!Object.prototype.hasOwnProperty.call(ACCESS_TYPES, type)) {
+    return;
+  }
+
+  const requests = getRequests();
+
+  requests.push({
+    type,
+    name: ACCESS_TYPES[type],
+    created: Date.now(),
+    status: "Demo request created"
+  });
+
   localStorage.setItem(
-    REQUEST_STORAGE,
+    "hb_permission_requests",
     JSON.stringify(requests)
   );
-}
-
-function requestAccess(type) {
-  const service = ACCESS_TYPES[type];
-
-  if (!service) {
-    alert('Invalid request type.');
-    return;
-  }
-
-  const confirmed = confirm(
-    service +
-    ' permission demo request তৈরি করবেন?\n\n' +
-    'এটি শুধু এই ডিভাইসে সংরক্ষিত হবে। ' +
-    'অন্য ব্যক্তির সম্মতি ছাড়া কোনো তথ্য পাওয়া যাবে না।'
-  );
-
-  if (!confirmed) return;
-
-  const requests = readRequests();
-
-  const request = {
-    id: Date.now().toString() +
-        '-' + Math.floor(Math.random() * 100000),
-    type,
-    service,
-    status: 'PENDING',
-    createdAt: Date.now(),
-    expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000
-  };
-
-  requests.push(request);
-  saveRequests(requests);
 
   getPermissionStatus();
-
-  alert(
-    service + ' demo request created.\n\n' +
-    'Status: PENDING\n' +
-    'Storage: This device only\n' +
-    'No access has been granted.'
-  );
 }
-
-/* =====================================
-   15. PERMISSION STATUS MANAGER
-   ===================================== */
 
 function getPermissionStatus() {
-  const requests = readRequests();
-  const now = Date.now();
-
-  const updated = requests.map(item => {
-    if (now >= item.expiresAt &&
-        item.status !== 'EXPIRED') {
-      return { ...item, status: 'EXPIRED' };
-    }
-
-    return item;
-  });
-
-  saveRequests(updated);
-
-  const box = $('permissionStatus');
+  const box = $("permissionStatus");
   if (!box) return;
 
-  box.replaceChildren();
+  const requests = getRequests();
 
-  if (!updated.length) {
-    box.textContent = 'No permission requests yet.';
+  box.textContent = "";
+
+  if (!requests.length) {
+    box.textContent = "No requests created yet.";
     return;
   }
 
-  updated.forEach(item => {
-    const card = document.createElement('div');
-    card.className = 'permission-card';
+  const heading = document.createElement("h3");
+  heading.textContent = "Local Demo Requests";
+  box.appendChild(heading);
 
-    const title = document.createElement('strong');
-    title.textContent = item.service;
+  requests.forEach(request => {
+    const item = document.createElement("p");
 
-    const status = document.createElement('p');
-    status.textContent = 'Status: ' + item.status;
+    item.textContent =
+      `${request.name} — ${new Date(request.created).toLocaleString()}`;
 
-    const duration = document.createElement('p');
-    duration.textContent = 'Demo limit: 7 days';
-
-    card.append(title, status, duration);
-    box.appendChild(card);
+    box.appendChild(item);
   });
+
+  const note = document.createElement("p");
+  note.textContent =
+    "These are local demo records only. No external access is granted.";
+
+  box.appendChild(note);
 }
 
-/* =====================================
-   16. APP INITIALIZATION
-   ===================================== */
+window.requestAccess = requestAccess;
 
-document.addEventListener('DOMContentLoaded', () => {
-  getPermissionStatus();
-  net();
-  updateSecurity();
+/* ---------- LICENSE CENTER ---------- */
+
+on("activateLicense", "click", () => {
+  const key = $("licenseKey")?.value.trim();
+
+  if (!key) {
+    setText("licenseMessage", "Please enter a license key.");
+    return;
+  }
+
+  setText(
+    "licenseMessage",
+    "License server is not connected. No activation was performed."
+  );
 });
 
-console.log('HORIZON BLUE v3.0 initialized.');
+/* ---------- INITIALIZATION ---------- */
+
+function initializeApp() {
+  updateNetwork();
+  updateDevice();
+  loadSecurity();
+  getPermissionStatus();
+
+  setText("licenseEdition", "Free Edition");
+  setText("licenseStatus", "Not Activated");
+  setText("licenseExpiry", "—");
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initializeApp);
+} else {
+  initializeApp();
+       }
