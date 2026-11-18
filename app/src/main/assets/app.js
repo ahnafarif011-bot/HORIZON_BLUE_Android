@@ -481,3 +481,49 @@ function requestAccess(type) {
     "এটি এখনো অন্য ব্যক্তির কাছে পাঠানো হয়নি।"
   );
 }
+/* HORIZON BLUE - Access Status Manager */
+
+function getPermissionStatus() {
+  const requests = JSON.parse(
+    localStorage.getItem("hb_permission_requests") || "[]"
+  );
+
+  const now = Date.now();
+
+  const updated = requests.map(item => {
+    if (
+      item.status === "APPROVED" &&
+      now >= item.expiresAt
+    ) {
+      return { ...item, status: "EXPIRED" };
+    }
+
+    return item;
+  });
+
+  localStorage.setItem(
+    "hb_permission_requests",
+    JSON.stringify(updated)
+  );
+
+  const box = document.getElementById("permissionStatus");
+
+  if (!box) return;
+
+  if (!updated.length) {
+    box.textContent = "No permission requests yet.";
+    return;
+  }
+
+  box.innerHTML = updated.map(item => `
+    <div class="permission-card">
+      <strong>${item.service}</strong>
+      <p>Status: ${item.status}</p>
+      <p>Maximum duration: 7 days</p>
+    </div>
+  `).join("");
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  getPermissionStatus();
+});
